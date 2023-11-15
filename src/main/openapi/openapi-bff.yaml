@@ -1,0 +1,294 @@
+---
+openapi: 3.0.3
+info:
+  title: onecx-theme-bff
+  description: OneCx theme Bff
+  version: "1.0"
+servers:
+  - url: http://onecx-theme-bff:8080/
+tags:
+  - name: theme
+paths:
+  /themes:
+    get:
+      tags:
+        - themes
+      description: Find all themes
+      operationId: getThemes
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            format: int32
+            description: The number of page.
+            default: 0
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            format: int32
+            description: The size of page
+            default: 100
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemesPageResult'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+    post:
+      tags:
+        - themes
+      description: Create theme
+      operationId: createTheme
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeCreate'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+  /theme/{id}:
+    get:
+      tags:
+        - themes
+      description: Find theme by id
+      operationId: getThemeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+    put:
+      tags:
+        - themes
+      description: Update theme
+      operationId: updateTheme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeUpdate'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+    delete:
+      tags:
+        - themes
+      description: Delete theme
+      operationId: deleteTheme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+components:
+  schemas:
+    Theme:
+      required:
+        - name
+      type: object
+      properties:
+        version:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+        id:
+          type: string
+        name:
+          minLength: 2
+          type: string
+        cssFile:
+          type: string
+        description:
+          type: string
+        assetsUrl:
+          type: string
+        logoUrl:
+          type: string
+        faviconUrl:
+          type: string
+        previewImageUrl:
+          type: string
+        assetsUpdateDate:
+          type: string
+        properties:
+          type: object
+        portals:
+          type: array
+    OffsetDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00
+    RestException:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string
+        parameters:
+          type: array
+          items:
+            type: object
+        namedParameters:
+          type: object
+          additionalProperties:
+            type: object
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationConstraint'
+    ValidationConstraint:
+      type: object
+      properties:
+        parameter:
+          type: string
+        message:
+          type: string
+    ThemeCreate:
+      required:
+        - name
+      type: object
+      properties:
+        version:
+          format: int32
+          type: integer
+        name:
+          minLength: 2
+          type: string
+        cssFile:
+          type: string
+        description:
+          type: string
+        assetsUrl:
+          type: string
+        logoUrl:
+          type: string
+        faviconUrl:
+          type: string
+        previewImageUrl:
+          type: string
+        properties:
+          type: object
+        portals:
+          type: array
+    ThemeUpdate:
+      type: object
+      properties:
+        version:
+          format: int32
+          type: integer
+        name:
+          minLength: 2
+          type: string
+        cssFile:
+          type: string
+        description:
+          type: string
+        assetsUrl:
+          type: string
+        logoUrl:
+          type: string
+        faviconUrl:
+          type: string
+        previewImageUrl:
+          type: string
+        properties:
+          type: object
+        portals:
+          type: array
+
