@@ -253,6 +253,8 @@ components:
           type: object
         portals:
           type: array
+          items:
+            type: object
     GetThemeResponse:
       required:
         - resource
