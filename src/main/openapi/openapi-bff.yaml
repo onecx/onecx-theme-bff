@@ -36,7 +36,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ThemesPageResult'
+                $ref: '#/components/schemas/GetThemesResponse'
         "400":
           description: Bad request
           content:
@@ -58,8 +58,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ThemeCreate'
+              $ref: '#/components/schemas/CreateThemeRequest'
       responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateThemeResponse'
         "204":
           description: No Content
         "400":
@@ -76,7 +82,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RestException'
-  /theme/{id}:
+  /themes/{id}:
     get:
       tags:
         - themes
@@ -94,7 +100,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Theme'
+                $ref: '#/components/schemas/GetThemeResponse'
         "400":
           description: Bad request
           content:
@@ -124,8 +130,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ThemeUpdate'
+              $ref: '#/components/schemas/UpdateThemeRequest'
       responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateThemeResponse'
         "204":
           description: No Content
         "400":
@@ -168,11 +180,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RestException'
+  /themes/search:
+    post:
+      tags:
+        - themes
+      description: Search themes by criteria
+      operationId: searchThemes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchThemeRequest'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchThemeResponse'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
 components:
   schemas:
     Theme:
-      required:
-        - name
       type: object
       properties:
         version:
@@ -209,6 +253,46 @@ components:
           type: object
         portals:
           type: array
+    GetThemeResponse:
+      required:
+        - resource
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/Theme'
+    GetThemesResponse:
+      type: object
+      properties:
+        totalElements:
+          format: int32
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/Theme'
+    CreateThemeResponse:
+      required:
+        - resource
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/Theme'
+    UpdateThemeResponse:
+      required:
+        - resource
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/Theme'
     OffsetDateTime:
       format: date-time
       type: string
@@ -239,56 +323,41 @@ components:
           type: string
         message:
           type: string
-    ThemeCreate:
+    CreateThemeRequest:
       required:
-        - name
+        - resource
       type: object
       properties:
-        version:
-          format: int32
-          type: integer
-        name:
-          minLength: 2
-          type: string
-        cssFile:
-          type: string
-        description:
-          type: string
-        assetsUrl:
-          type: string
-        logoUrl:
-          type: string
-        faviconUrl:
-          type: string
-        previewImageUrl:
-          type: string
-        properties:
-          type: object
-        portals:
-          type: array
-    ThemeUpdate:
+        resource:
+          $ref: '#/components/schemas/Theme'
+    UpdateThemeRequest:
+      required:
+        - resource
       type: object
       properties:
-        version:
+        resource:
+          $ref: '#/components/schemas/Theme'
+    SearchThemeRequest:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/Theme'
+    SearchThemeResponse:
+      type: object
+      properties:
+        totalElements:
           format: int32
           type: integer
-        name:
-          minLength: 2
-          type: string
-        cssFile:
-          type: string
-        description:
-          type: string
-        assetsUrl:
-          type: string
-        logoUrl:
-          type: string
-        faviconUrl:
-          type: string
-        previewImageUrl:
-          type: string
-        properties:
-          type: object
-        portals:
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+        stream:
           type: array
-
+          items:
+            $ref: '#/components/schemas/Theme'
