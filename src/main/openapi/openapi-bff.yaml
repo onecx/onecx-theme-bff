@@ -16,20 +16,8 @@ paths:
       description: Find all themes
       operationId: getThemes
       parameters:
-        - name: pageNumber
-          in: query
-          schema:
-            format: int32
-            description: The number of page.
-            default: 0
-            type: integer
-        - name: pageSize
-          in: query
-          schema:
-            format: int32
-            description: The size of page
-            default: 100
-            type: integer
+        - $ref: '#/components/parameters/pageNumber'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         "200":
           description: OK
@@ -42,13 +30,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestException'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestException'
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        "404":
+          description: Not found
     post:
       tags:
         - themes
@@ -73,15 +57,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestException'
+                $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Not Found
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestException'
   /themes/{id}:
     get:
       tags:
@@ -89,11 +67,7 @@ paths:
       description: Find theme by id
       operationId: getThemeById
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         "200":
           description: OK
@@ -106,26 +80,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestException'
+                $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Not Found
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestException'
     put:
       tags:
         - themes
       description: Update theme
       operationId: updateTheme
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         content:
           application/json:
@@ -145,26 +109,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestException'
+                $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Not Found
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestException'
     delete:
       tags:
         - themes
       description: Delete theme
       operationId: deleteTheme
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         "204":
           description: No Content
@@ -173,13 +127,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestException'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestException'
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /themes/search:
     post:
       tags:
@@ -205,15 +153,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestException'
+                $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Not Found
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestException'
 components:
   schemas:
     Theme:
@@ -263,24 +205,14 @@ components:
         resource:
           $ref: '#/components/schemas/Theme'
     GetThemesResponse:
-      type: object
-      properties:
-        totalElements:
-          format: int32
-          type: integer
-        number:
-          format: int32
-          type: integer
-        size:
-          format: int32
-          type: integer
-        totalPages:
-          format: int32
-          type: integer
-        stream:
-          type: array
-          items:
-            $ref: '#/components/schemas/Theme'
+      allOf:     # Combines the PagingResponse and the Resources
+        - $ref: '#/components/schemas/PagingResponse'
+        - type: object
+          properties:
+            stream:
+              type: array
+              items:
+                $ref: '#/components/schemas/Theme'
     CreateThemeResponse:
       required:
         - resource
@@ -299,29 +231,29 @@ components:
       format: date-time
       type: string
       example: 2022-03-10T12:15:50-04:00
-    RestException:
+    ProblemDetailResponse:
       type: object
       properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
         errorCode:
           type: string
-        message:
+        detail:
           type: string
-        parameters:
-          type: array
-          items:
-            type: object
-        namedParameters:
-          type: object
-          additionalProperties:
-            type: object
-        validations:
+        instance:
+          type: string
+        invalidParams:
           type: array
           items:
             $ref: '#/components/schemas/ValidationConstraint'
     ValidationConstraint:
       type: object
       properties:
-        parameter:
+        name:
           type: string
         message:
           type: string
@@ -345,6 +277,15 @@ components:
         resource:
           $ref: '#/components/schemas/Theme'
     SearchThemeResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagingResponse'
+        - type: object
+          properties:
+            stream:
+              type: array
+              items:
+                $ref: '#/components/schemas/Theme'
+    PagingResponse:
       type: object
       properties:
         totalElements:
@@ -359,7 +300,26 @@ components:
         totalPages:
           format: int32
           type: integer
-        stream:
-          type: array
-          items:
-            $ref: '#/components/schemas/Theme'
+  parameters:
+    pageNumber:
+      in: query
+      name: pageNumber
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    pageSize:
+      in: query
+      name: pageSize
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 100
+    id:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
