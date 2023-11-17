@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.onecx</groupId>
         <artifactId>onecx-quarkus3-parent</artifactId>
-        <version>0.17.0</version>
+        <version>0.18.0</version>
     </parent>
 
     <artifactId>onecx-parameter-bff</artifactId>
@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy</artifactId>
+            <artifactId>quarkus-resteasy-reactive</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy-jackson</artifactId>
+            <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-client-jackson</artifactId>
+            <artifactId>quarkus-rest-client-reactive-jackson</artifactId>
         </dependency>
 
         <dependency>
@@ -57,6 +57,10 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
         <!-- DEV -->
@@ -84,4 +88,70 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>internal</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/openapi/openapi-bff.yaml</inputSpec>
+                            <apiPackage>gen.io.github.onecx.theme.bff.rs.internal</apiPackage>
+                            <modelPackage>gen.io.github.onecx.theme.bff.rs.internal.model</modelPackage>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <generatorName>jaxrs-spec</generatorName>
+                    <apiNameSuffix>ApiService</apiNameSuffix>
+                    <modelNameSuffix>DTO</modelNameSuffix>
+                    <generateApiTests>false</generateApiTests>
+                    <generateApiDocumentation>false</generateApiDocumentation>
+                    <generateModelTests>false</generateModelTests>
+                    <generateModelDocumentation>false</generateModelDocumentation>
+                    <generateSupportingFiles>false</generateSupportingFiles>
+                    <addCompileSourceRoot>true</addCompileSourceRoot>
+                    <library>quarkus</library>
+                    <configOptions>
+                        <sourceFolder>/</sourceFolder>
+                        <openApiNullable>false</openApiNullable>
+                        <returnResponse>true</returnResponse>
+                        <useTags>true</useTags>
+                        <interfaceOnly>true</interfaceOnly>
+                        <serializableModel>true</serializableModel>
+                        <singleContentTypes>true</singleContentTypes>
+                        <dateLibrary>java8</dateLibrary>
+                        <useMicroProfileOpenAPIAnnotations>true</useMicroProfileOpenAPIAnnotations>
+                        <useJakartaEe>true</useJakartaEe>
+                        <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                        <java17>true</java17>
+                    </configOptions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <url>https://raw.githubusercontent.com/onecx/onecx-theme-svc/main/src/main/openapi/onecx-theme-internal-openapi.yaml</url>
+                    <outputDirectory>target/tmp/openapi</outputDirectory>
+                    <outputFileName>onecx-theme-svc.yaml</outputFileName>
+                    <skipCache>true</skipCache>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
