@@ -30,8 +30,6 @@ public class ThemeRestController implements ThemesApiService {
     ThemeMapper mapper;
 
     @Inject
-    ObjectMapper objectMapper;
-    @Inject
     ResponseMapper responseMapper;
 
     @Override
