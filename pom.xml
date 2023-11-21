@@ -8,7 +8,7 @@
         <version>0.18.0</version>
     </parent>
 
-    <artifactId>onecx-parameter-bff</artifactId>
+    <artifactId>onecx-theme-bff</artifactId>
     <version>999-SNAPSHOT</version>
 
     <dependencies>
