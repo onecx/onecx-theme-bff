@@ -140,8 +140,8 @@ paths:
             schema:
               $ref: '#/components/schemas/SearchThemeRequest'
       responses:
-        "201":
-          description: Created
+        "200":
+          description: Ok
           content:
             application/json:
               schema:
@@ -241,16 +241,25 @@ components:
         params:
           type: array
           items:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
+            $ref: '#/components/schemas/ProblemDetailParam'
         invalidParams:
           type: array
           items:
-            $ref: '#/components/schemas/ValidationConstraint'
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
     ValidationConstraint:
       type: object
       properties:
@@ -277,6 +286,13 @@ components:
       properties:
         resource:
           $ref: '#/components/schemas/Theme'
+        pageNumber:
+          type: integer
+          format: int32
+          default: 0
+        pageSize:
+          type: integer
+          format: int32
     SearchThemeResponse:
       allOf:
         - $ref: '#/components/schemas/PagingResponse'
