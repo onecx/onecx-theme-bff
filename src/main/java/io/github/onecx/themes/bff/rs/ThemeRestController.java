@@ -1,5 +1,12 @@
 package io.github.onecx.themes.bff.rs;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
+
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
 import gen.io.github.onecx.theme.bff.clients.api.ThemesInternalApi;
 import gen.io.github.onecx.theme.bff.clients.model.ThemePageResult;
 import gen.io.github.onecx.theme.bff.clients.model.ThemeSearchCriteria;
@@ -8,11 +15,6 @@ import gen.io.github.onecx.theme.bff.rs.internal.ThemesApiService;
 import gen.io.github.onecx.theme.bff.rs.internal.model.*;
 import io.github.onecx.themes.bff.rs.mappers.ResponseMapper;
 import io.github.onecx.themes.bff.rs.mappers.ThemeMapper;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
@@ -75,6 +77,6 @@ public class ThemeRestController implements ThemesApiService {
         Response response = client.updateTheme(id, mapper.mapUpdate(updateThemeRequestDTO.getResource()));
         UpdateThemeResponseDTO updateThemeResponseDTO = responseMapper
                 .updateThemeResponseMapper(response.readEntity(UpdateTheme.class));
-        return Response.ok(updateThemeRequestDTO).build();
+        return Response.ok(updateThemeResponseDTO).build();
     }
 }

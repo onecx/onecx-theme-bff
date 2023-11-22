@@ -193,10 +193,7 @@ components:
           type: string
         properties:
           type: object
-        portals:
-          type: array
-          items:
-            type: object
+
     GetThemeResponse:
       required:
         - resource
@@ -204,8 +201,12 @@ components:
       properties:
         resource:
           $ref: '#/components/schemas/Theme'
+        portals:
+          type: array
+          items:
+            type: object
     GetThemesResponse:
-      allOf:     # Combines the PagingResponse and the Resources
+      allOf: # Combines the PagingResponse and the Resources
         - $ref: '#/components/schemas/PagingResponse'
         - type: object
           properties:
@@ -306,7 +307,7 @@ components:
       type: object
       properties:
         totalElements:
-          format: int32
+          format: int64
           type: integer
         number:
           format: int32
@@ -315,7 +316,7 @@ components:
           format: int32
           type: integer
         totalPages:
-          format: int32
+          format: int64
           type: integer
   parameters:
     pageNumber:

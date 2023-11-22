@@ -33,8 +33,8 @@ public class ResponseMapper {
         responseDTO.setStream(pageResult.getStream().stream().map(theme -> mapper.map(theme)).collect(Collectors.toList()));
         responseDTO.setNumber(pageResult.getNumber());
         responseDTO.setSize(pageResult.getSize());
-        responseDTO.setTotalElements(Math.toIntExact(pageResult.getTotalElements()));
-        responseDTO.setTotalPages(Math.toIntExact(pageResult.getTotalPages()));
+        responseDTO.setTotalElements(pageResult.getTotalElements());
+        responseDTO.setTotalPages(pageResult.getTotalPages());
         return responseDTO;
     }
 
@@ -43,8 +43,8 @@ public class ResponseMapper {
         responseDTO.setStream(pageResult.getStream().stream().map(theme -> mapper.map(theme)).collect(Collectors.toList()));
         responseDTO.setNumber(pageResult.getNumber());
         responseDTO.setSize(pageResult.getSize());
-        responseDTO.setTotalElements(Math.toIntExact(pageResult.getTotalElements()));
-        responseDTO.setTotalPages(Math.toIntExact(pageResult.getTotalPages()));
+        responseDTO.setTotalElements(pageResult.getTotalElements());
+        responseDTO.setTotalPages(pageResult.getTotalPages());
         return responseDTO;
     }
 
