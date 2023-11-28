@@ -7,15 +7,14 @@ import gen.io.github.onecx.theme.bff.clients.model.CreateTheme;
 import gen.io.github.onecx.theme.bff.clients.model.Theme;
 import gen.io.github.onecx.theme.bff.clients.model.UpdateTheme;
 import gen.io.github.onecx.theme.bff.rs.internal.model.ThemeDTO;
+import gen.io.github.onecx.theme.bff.rs.internal.model.ThemeUpdateCreateDTO;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface ThemeMapper {
 
-    UpdateTheme mapUpdate(ThemeDTO dto);
+    UpdateTheme mapUpdate(ThemeUpdateCreateDTO dto);
 
-    ThemeDTO mapUpdate(UpdateTheme updateTheme);
-
-    CreateTheme mapCreate(ThemeDTO dto);
+    CreateTheme mapCreate(ThemeUpdateCreateDTO dto);
 
     ThemeDTO map(Theme theme);
 

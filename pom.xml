@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.onecx</groupId>
         <artifactId>onecx-quarkus3-parent</artifactId>
-        <version>0.18.0</version>
+        <version>0.21.0</version>
     </parent>
 
     <artifactId>onecx-theme-bff</artifactId>
@@ -53,7 +54,6 @@
             <groupId>org.tkit.quarkus.lib</groupId>
             <artifactId>tkit-quarkus-rest</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -62,7 +62,6 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
-
         <!-- DEV -->
         <dependency>
             <groupId>io.quarkiverse.mockserver</groupId>
@@ -146,7 +145,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <url>https://raw.githubusercontent.com/onecx/onecx-theme-svc/main/src/main/openapi/onecx-theme-internal-openapi.yaml</url>
+                    <url>
+                        https://raw.githubusercontent.com/onecx/onecx-theme-svc/main/src/main/openapi/onecx-theme-internal-openapi.yaml
+                    </url>
                     <outputDirectory>target/tmp/openapi</outputDirectory>
                     <outputFileName>onecx-theme-svc.yaml</outputFileName>
                     <skipCache>true</skipCache>

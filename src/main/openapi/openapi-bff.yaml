@@ -193,6 +193,39 @@ components:
           type: string
         properties:
           type: object
+    ThemeUpdateCreate:
+      type: object
+      properties:
+        version:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+        name:
+          minLength: 2
+          type: string
+        cssFile:
+          type: string
+        description:
+          type: string
+        assetsUrl:
+          type: string
+        logoUrl:
+          type: string
+        faviconUrl:
+          type: string
+        previewImageUrl:
+          type: string
+        assetsUpdateDate:
+          type: string
+        properties:
+          type: object
 
     GetThemeResponse:
       required:
@@ -274,14 +307,14 @@ components:
       type: object
       properties:
         resource:
-          $ref: '#/components/schemas/Theme'
+          $ref: '#/components/schemas/ThemeUpdateCreate'
     UpdateThemeRequest:
       required:
         - resource
       type: object
       properties:
         resource:
-          $ref: '#/components/schemas/Theme'
+          $ref: '#/components/schemas/ThemeUpdateCreate'
     SearchThemeRequest:
       type: object
       properties:

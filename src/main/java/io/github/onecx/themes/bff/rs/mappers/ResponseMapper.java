@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import gen.io.github.onecx.theme.bff.clients.model.ThemePageResult;
-import gen.io.github.onecx.theme.bff.clients.model.UpdateTheme;
 import gen.io.github.onecx.theme.bff.rs.internal.model.*;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
@@ -48,9 +47,4 @@ public class ResponseMapper {
         return responseDTO;
     }
 
-    public UpdateThemeResponseDTO updateThemeResponseMapper(UpdateTheme updateTheme) {
-        UpdateThemeResponseDTO updateThemeResponseDTO = new UpdateThemeResponseDTO();
-        updateThemeResponseDTO.setResource(mapper.mapUpdate(updateTheme));
-        return updateThemeResponseDTO;
-    }
 }

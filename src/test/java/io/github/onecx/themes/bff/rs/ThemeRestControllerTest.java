@@ -180,7 +180,7 @@ public class ThemeRestControllerTest extends AbstractTest {
         mockServerClient.when(request().withPath("/internal/themes/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
                 .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
