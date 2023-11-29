@@ -95,13 +95,15 @@ public class ThemeRestController implements ThemesApiService {
     public Response updateTheme(String id, UpdateThemeRequestDTO updateThemeRequestDTO) {
         try {
             client.updateTheme(id, mapper.mapUpdate(updateThemeRequestDTO.getResource()));
-            Response updatedThemeResponse = client.getThemeById(id);
-            return Response.ok(mapper.map(updatedThemeResponse.readEntity(Theme.class))).build();
         } catch (WebApplicationException ex) {
             return Response.status(ex.getResponse().getStatus())
                     .entity(problemDetailMapper.map(ex.getResponse().readEntity(ProblemDetailResponse.class)))
                     .build();
         }
+        Response updatedThemeResponse = client.getThemeById(id);
+        UpdateThemeResponseDTO updateThemeResponseDTO = new UpdateThemeResponseDTO();
+        updateThemeResponseDTO.setResource(mapper.map(updatedThemeResponse.readEntity(Theme.class)));
+        return Response.ok(updateThemeResponseDTO).build();
     }
 
     @ServerExceptionMapper

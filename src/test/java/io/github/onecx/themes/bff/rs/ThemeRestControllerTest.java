@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
+import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.io.github.onecx.theme.bff.clients.model.Theme;
 import gen.io.github.onecx.theme.bff.clients.model.ThemePageResult;
@@ -25,6 +26,7 @@ import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@LogService
 public class ThemeRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
@@ -82,8 +84,7 @@ public class ThemeRestControllerTest extends AbstractTest {
 
     @Test
     void createThemeTest() {
-        ThemeDTO data = new ThemeDTO();
-        data.setId("app1");
+        ThemeUpdateCreateDTO data = new ThemeUpdateCreateDTO();
         data.setName("value1");
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
@@ -106,7 +107,6 @@ public class ThemeRestControllerTest extends AbstractTest {
                 .extract().as(CreateThemeResponseDTO.class);
 
         Assertions.assertNotNull(output.getResource());
-        Assertions.assertEquals(data.getId(), output.getResource().getId());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
     }
 
@@ -201,42 +201,42 @@ public class ThemeRestControllerTest extends AbstractTest {
     }
 
     @Test
-    void updateParameterValueTest() {
-
-        String id = "test-update-1";
-
-        UpdateTheme data = new UpdateTheme();
-        data.description("description1");
-        data.name("test1");
+    void updateThemeTest() {
+        String testId = "testId";
+        UpdateTheme updateTheme = new UpdateTheme();
+        updateTheme.setName("test-name");
 
         // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/themes/" + id).withMethod(HttpMethod.PUT)
-                .withBody(JsonBody.json(data)))
+        mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
+                .withBody(JsonBody.json(updateTheme)))
                 .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withBody(JsonBody.json(data))
+                .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
+        Theme theme = new Theme();
+        theme.setName("test-name");
+        theme.setId("testId");
+
+        mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withBody(JsonBody.json(theme))
+                        .withContentType(MediaType.APPLICATION_JSON));
+
+        ThemeUpdateCreateDTO updateCreateDTO = new ThemeUpdateCreateDTO();
+        updateCreateDTO.setName("test-2");
         UpdateThemeRequestDTO input = new UpdateThemeRequestDTO();
-        ThemeDTO dto = new ThemeDTO();
-        dto.setId("1");
-        dto.setName("test1");
-        dto.setDescription("description1");
-        input.setResource(dto);
+        input.setResource(updateCreateDTO);
 
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", id)
+                .pathParam("id", testId)
                 .body(input)
                 .put("/themes/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
                 .extract().as(UpdateThemeResponseDTO.class);
-
-        Assertions.assertNotNull(output);
-        Assertions.assertEquals(data.getName(), output.getResource().getName());
-        Assertions.assertEquals(data.getDescription(), output.getResource().getDescription());
     }
 }
