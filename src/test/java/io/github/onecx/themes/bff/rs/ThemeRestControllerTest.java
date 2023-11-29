@@ -205,7 +205,6 @@ public class ThemeRestControllerTest extends AbstractTest {
         String testId = "testId";
         UpdateTheme updateTheme = new UpdateTheme();
         updateTheme.setName("test-name");
-
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateTheme)))
@@ -214,7 +213,7 @@ public class ThemeRestControllerTest extends AbstractTest {
                         .withContentType(MediaType.APPLICATION_JSON));
 
         Theme theme = new Theme();
-        theme.setName("test-name");
+        theme.setName("test-name2");
         theme.setId("testId");
 
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.GET))
@@ -224,7 +223,7 @@ public class ThemeRestControllerTest extends AbstractTest {
                         .withContentType(MediaType.APPLICATION_JSON));
 
         ThemeUpdateCreateDTO updateCreateDTO = new ThemeUpdateCreateDTO();
-        updateCreateDTO.setName("test-2");
+        updateCreateDTO.setName("test-name");
         UpdateThemeRequestDTO input = new UpdateThemeRequestDTO();
         input.setResource(updateCreateDTO);
 
@@ -238,5 +237,8 @@ public class ThemeRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
                 .extract().as(UpdateThemeResponseDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals(theme.getName(), output.getResource().getName());
     }
 }
