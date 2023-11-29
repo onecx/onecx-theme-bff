@@ -1,0 +1,4 @@
+app:
+  image:
+    repository: "onecx/onecx-theme-bff"
+    tag: 999-SNAPSHOT
