@@ -327,7 +327,9 @@ public class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", notFoundId)
-                .get("/themes/{id}");
+                .get("/themes/{id}")
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         System.out.println(output.toString());
         Assertions.assertNotNull(output);
     }
