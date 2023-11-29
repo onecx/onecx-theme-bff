@@ -17,10 +17,7 @@ import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.io.github.onecx.theme.bff.clients.model.Theme;
-import gen.io.github.onecx.theme.bff.clients.model.ThemePageResult;
-import gen.io.github.onecx.theme.bff.clients.model.ThemeSearchCriteria;
-import gen.io.github.onecx.theme.bff.clients.model.UpdateTheme;
+import gen.io.github.onecx.theme.bff.clients.model.*;
 import gen.io.github.onecx.theme.bff.rs.internal.model.*;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.junit.QuarkusTest;
@@ -28,217 +25,310 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 @LogService
 public class ThemeRestControllerTest extends AbstractTest {
-    @InjectMockServerClient
-    MockServerClient mockServerClient;
+  @InjectMockServerClient
+  MockServerClient mockServerClient;
 
-    @Test
-    void getThemeByIdTest() {
+  @Test
+  void getThemeByIdTest() {
 
-        Theme data = new Theme();
-        data.setId("test-id-1");
-        data.setName("test-name");
-        data.setDescription("this is a test theme");
+    Theme data = new Theme();
+    data.setId("test-id-1");
+    data.setName("test-name");
+    data.setDescription("this is a test theme");
 
-        // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
-                .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(data)));
+    // create mock rest endpoint
+    mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                    .withContentType(MediaType.APPLICATION_JSON)
+                    .withBody(JsonBody.json(data)));
 
-        var output = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .pathParam("id", data.getId())
-                .get("/themes/{id}")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(GetThemeResponseDTO.class);
+    var output = given()
+            .when()
+            .contentType(APPLICATION_JSON)
+            .pathParam("id", data.getId())
+            .get("/themes/{id}")
+            .then()
+            .statusCode(Response.Status.OK.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(GetThemeResponseDTO.class);
 
-        Assertions.assertNotNull(output.getResource());
-        Assertions.assertEquals(data.getId(), output.getResource().getId());
-        Assertions.assertEquals(data.getName(), output.getResource().getName());
-    }
+    Assertions.assertNotNull(output.getResource());
+    Assertions.assertEquals(data.getId(), output.getResource().getId());
+    Assertions.assertEquals(data.getName(), output.getResource().getName());
+  }
 
-    @Test
-    void deleteThemeTest() {
+  @Test
+  void deleteThemeTest() {
 
-        String id = "test-id-1";
+    String id = "test-id-1";
 
-        // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/themes/" + id).withMethod(HttpMethod.DELETE))
-                .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON));
+    // create mock rest endpoint
+    mockServerClient.when(request().withPath("/internal/themes/" + id).withMethod(HttpMethod.DELETE))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
+                    .withContentType(MediaType.APPLICATION_JSON));
 
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .pathParam("id", id)
-                .delete("/themes/{id}")
-                .then()
-                .statusCode(Response.Status.NO_CONTENT.getStatusCode())
-                .contentType(APPLICATION_JSON);
-    }
+    given()
+            .when()
+            .contentType(APPLICATION_JSON)
+            .pathParam("id", id)
+            .delete("/themes/{id}")
+            .then()
+            .statusCode(Response.Status.NO_CONTENT.getStatusCode())
+            .contentType(APPLICATION_JSON);
+  }
 
-    @Test
-    void createThemeTest() {
-        ThemeUpdateCreateDTO data = new ThemeUpdateCreateDTO();
-        data.setName("value1");
-        // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
-                .withBody(JsonBody.json(data)))
-                .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(data)));
-        CreateThemeRequestDTO input = new CreateThemeRequestDTO();
-        input.setResource(data);
+  @Test
+  void createThemeTest() {
+    CreateTheme data = new CreateTheme();
+    data.setName("value1");
+    Theme theme = new Theme();
+    theme.setName("value1");
 
-        var output = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(input)
-                .post("/themes")
-                .then()
-                .statusCode(Response.Status.CREATED.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(CreateThemeResponseDTO.class);
+    // create mock rest endpoint
+    mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
+                    .withBody(JsonBody.json(data)))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
+                    .withContentType(MediaType.APPLICATION_JSON)
+                    .withBody(JsonBody.json(theme)));
 
-        Assertions.assertNotNull(output.getResource());
-        Assertions.assertEquals(data.getName(), output.getResource().getName());
-    }
+    CreateThemeRequestDTO input = new CreateThemeRequestDTO();
+    ThemeUpdateCreateDTO updateCreateDTO = new ThemeUpdateCreateDTO();
+    updateCreateDTO.setName("value1");
+    input.setResource(updateCreateDTO);
 
-    @Test
-    void getAllApplicationParametersTest() {
-        Theme t1 = new Theme();
-        t1.setId("1");
-        t1.setName("test name");
+    var output = given()
+            .when()
+            .contentType(APPLICATION_JSON)
+            .body(input)
+            .post("/themes")
+            .then()
+            .statusCode(Response.Status.CREATED.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(CreateThemeResponseDTO.class);
 
-        Theme t2 = new Theme();
-        t2.setId("2");
-        t2.setName("test name");
+    Assertions.assertNotNull(output.getResource());
+    Assertions.assertEquals(data.getName(), output.getResource().getName());
+  }
 
-        ThemePageResult data = new ThemePageResult();
-        data.setNumber(1);
-        data.setSize(2);
-        data.setTotalElements(2L);
-        data.setTotalPages(1L);
-        data.setStream(List.of(t1, t2));
+  @Test
+  void createThemeFailTest() {
+    CreateTheme data = new CreateTheme();
 
-        // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.GET))
-                .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(data)));
+    ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
+    problemDetailResponse.setErrorCode(Response.Status.BAD_REQUEST.toString());
+    mockServerClient.reset();
+    // create mock rest endpoint
+    mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
+                    .withBody(JsonBody.json(data)))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                    .withContentType(MediaType.APPLICATION_JSON)
+                    .withBody(JsonBody.json(problemDetailResponse)));
 
-        var output = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .get("/themes")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(GetThemesResponseDTO.class);
+    CreateThemeRequestDTO input = new CreateThemeRequestDTO();
+    ThemeUpdateCreateDTO updateCreateDTO = new ThemeUpdateCreateDTO();
+    input.setResource(updateCreateDTO);
 
-        Assertions.assertNotNull(output);
-        Assertions.assertEquals(data.getSize(), output.getSize());
-        Assertions.assertEquals(data.getStream().size(), output.getStream().size());
-        Assertions.assertEquals(data.getStream().get(0).getName(), output.getStream().get(0).getName());
-    }
+    var output = given()
+            .when()
+            .contentType(APPLICATION_JSON)
+            .body(input)
+            .post("/themes")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(ProblemDetailResponseDTO.class);
 
-    @Test
-    void searchThemeByCriteriaTest() {
-        ThemeSearchCriteria criteria = new ThemeSearchCriteria();
-        criteria.setPageNumber(1);
-        criteria.setName("test");
-        criteria.setPageSize(1);
+    Assertions.assertNotNull(output);
+    Assertions.assertEquals(problemDetailResponse.getErrorCode(), output.getErrorCode());
+  }
 
-        Theme t1 = new Theme();
-        t1.setId("1");
-        t1.setName("test");
+  @Test
+  void getAllThemesTest() {
+    Theme t1 = new Theme();
+    t1.setId("1");
+    t1.setName("test name");
 
-        ThemePageResult data = new ThemePageResult();
-        data.setNumber(1);
-        data.setSize(1);
-        data.setTotalElements(1L);
-        data.setTotalPages(1L);
-        data.setStream(List.of(t1));
+    Theme t2 = new Theme();
+    t2.setId("2");
+    t2.setName("test name");
 
-        ThemeDTO input = new ThemeDTO();
-        input.setName("test");
-        input.setId("1");
+    ThemePageResult data = new ThemePageResult();
+    data.setNumber(1);
+    data.setSize(2);
+    data.setTotalElements(2L);
+    data.setTotalPages(1L);
+    data.setStream(List.of(t1, t2));
 
-        SearchThemeRequestDTO searchThemeRequestDTO = new SearchThemeRequestDTO();
-        searchThemeRequestDTO.setPageNumber(1);
-        searchThemeRequestDTO.setPageSize(1);
-        searchThemeRequestDTO.setResource(input);
+    // create mock rest endpoint
+    mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.GET))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                    .withContentType(MediaType.APPLICATION_JSON)
+                    .withBody(JsonBody.json(data)));
 
-        // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/themes/search").withMethod(HttpMethod.POST)
-                .withBody(JsonBody.json(criteria)))
-                .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(data)));
+    var output = given()
+            .when()
+            .contentType(APPLICATION_JSON)
+            .get("/themes")
+            .then()
+            .statusCode(Response.Status.OK.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(GetThemesResponseDTO.class);
 
-        var output = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(searchThemeRequestDTO)
-                .post("/themes/search")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(SearchThemeResponseDTO.class);
+    Assertions.assertNotNull(output);
+    Assertions.assertEquals(data.getSize(), output.getSize());
+    Assertions.assertEquals(data.getStream().size(), output.getStream().size());
+    Assertions.assertEquals(data.getStream().get(0).getName(), output.getStream().get(0).getName());
+  }
 
-        Assertions.assertNotNull(output);
-        Assertions.assertEquals(data.getSize(), output.getSize());
-        Assertions.assertEquals(data.getStream().size(), output.getStream().size());
-        Assertions.assertEquals(data.getStream().get(0).getName(), output.getStream().get(0).getName());
-    }
+  @Test
+  void searchThemeByCriteriaTest() {
+    ThemeSearchCriteria criteria = new ThemeSearchCriteria();
+    criteria.setPageNumber(1);
+    criteria.setName("test");
+    criteria.setPageSize(1);
 
-    @Test
-    void updateThemeTest() {
-        String testId = "testId";
-        UpdateTheme updateTheme = new UpdateTheme();
-        updateTheme.setName("test-name");
-        // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
-                .withBody(JsonBody.json(updateTheme)))
-                .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON));
+    Theme t1 = new Theme();
+    t1.setId("1");
+    t1.setName("test");
 
-        Theme theme = new Theme();
-        theme.setName("test-name2");
-        theme.setId("testId");
+    ThemePageResult data = new ThemePageResult();
+    data.setNumber(1);
+    data.setSize(1);
+    data.setTotalElements(1L);
+    data.setTotalPages(1L);
+    data.setStream(List.of(t1));
 
-        mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.GET))
-                .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withBody(JsonBody.json(theme))
-                        .withContentType(MediaType.APPLICATION_JSON));
+    ThemeDTO input = new ThemeDTO();
+    input.setName("test");
+    input.setId("1");
 
-        ThemeUpdateCreateDTO updateCreateDTO = new ThemeUpdateCreateDTO();
-        updateCreateDTO.setName("test-name");
-        UpdateThemeRequestDTO input = new UpdateThemeRequestDTO();
-        input.setResource(updateCreateDTO);
+    SearchThemeRequestDTO searchThemeRequestDTO = new SearchThemeRequestDTO();
+    searchThemeRequestDTO.setPageNumber(1);
+    searchThemeRequestDTO.setPageSize(1);
+    searchThemeRequestDTO.setResource(input);
 
-        var output = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .pathParam("id", testId)
-                .body(input)
-                .put("/themes/{id}")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(UpdateThemeResponseDTO.class);
+    // create mock rest endpoint
+    mockServerClient.when(request().withPath("/internal/themes/search").withMethod(HttpMethod.POST)
+                    .withBody(JsonBody.json(criteria)))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                    .withContentType(MediaType.APPLICATION_JSON)
+                    .withBody(JsonBody.json(data)));
 
-        Assertions.assertNotNull(output);
-        Assertions.assertEquals(theme.getName(), output.getResource().getName());
-    }
+    var output = given()
+            .when()
+            .contentType(APPLICATION_JSON)
+            .body(searchThemeRequestDTO)
+            .post("/themes/search")
+            .then()
+            .statusCode(Response.Status.OK.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(SearchThemeResponseDTO.class);
+
+    Assertions.assertNotNull(output);
+    Assertions.assertEquals(data.getSize(), output.getSize());
+    Assertions.assertEquals(data.getStream().size(), output.getStream().size());
+    Assertions.assertEquals(data.getStream().get(0).getName(), output.getStream().get(0).getName());
+  }
+
+  @Test
+  void updateThemeTest() {
+    String testId = "testId";
+    UpdateTheme updateTheme = new UpdateTheme();
+    updateTheme.setName("test-name");
+    // create mock rest endpoint
+    mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
+                    .withBody(JsonBody.json(updateTheme)))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
+                    .withContentType(MediaType.APPLICATION_JSON));
+
+    Theme theme = new Theme();
+    theme.setName("test-name2");
+    theme.setId("testId");
+
+    mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.GET))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                    .withBody(JsonBody.json(theme))
+                    .withContentType(MediaType.APPLICATION_JSON));
+
+    ThemeUpdateCreateDTO updateCreateDTO = new ThemeUpdateCreateDTO();
+    updateCreateDTO.setName("test-name");
+    UpdateThemeRequestDTO input = new UpdateThemeRequestDTO();
+    input.setResource(updateCreateDTO);
+
+    var output = given()
+            .when()
+            .contentType(APPLICATION_JSON)
+            .pathParam("id", testId)
+            .body(input)
+            .put("/themes/{id}")
+            .then()
+            .statusCode(Response.Status.OK.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(UpdateThemeResponseDTO.class);
+
+    Assertions.assertNotNull(output);
+    Assertions.assertEquals(theme.getName(), output.getResource().getName());
+  }
+
+  @Test
+  void updateThemeFailTest() {
+    String testId = "testId";
+    UpdateTheme updateTheme = new UpdateTheme();
+    ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
+    problemDetailResponse.setErrorCode(Response.Status.BAD_REQUEST.toString());
+    // create mock rest endpoint
+    mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
+                    .withBody(JsonBody.json(updateTheme)))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                    .withBody(JsonBody.json(problemDetailResponse))
+                    .withContentType(MediaType.APPLICATION_JSON));
+
+    Theme theme = new Theme();
+    theme.setName("test-name2");
+    theme.setId("testId");
+
+    ThemeUpdateCreateDTO updateCreateDTO = new ThemeUpdateCreateDTO();
+    UpdateThemeRequestDTO input = new UpdateThemeRequestDTO();
+    input.setResource(updateCreateDTO);
+
+    var output = given()
+            .when()
+            .contentType(APPLICATION_JSON)
+            .pathParam("id", testId)
+            .body(input)
+            .put("/themes/{id}")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(ProblemDetailResponseDTO.class);
+
+    Assertions.assertNotNull(output);
+    Assertions.assertEquals(problemDetailResponse.getErrorCode(), output.getErrorCode());
+  }
+
+  @Test
+  void serverExceptionMapperTest() {
+    String notFoundId = "notFound";
+    // create mock rest endpoint
+    mockServerClient.when(request().withPath("/internal/themes/" + notFoundId).withMethod(HttpMethod.GET))
+            .withPriority(100)
+            .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
+
+    var output = given()
+            .when()
+            .contentType(APPLICATION_JSON)
+            .pathParam("id", notFoundId)
+            .get("/themes/{id}");
+    System.out.println(output.toString());
+    Assertions.assertNotNull(output);
+  }
 }

@@ -67,16 +67,10 @@ public class ThemeRestController implements ThemesApiService {
 
     @Override
     public Response getThemes(Integer pageNumber, Integer pageSize) {
-        try {
-            Response response = client.getThemes(pageNumber, pageSize);
-            ThemePageResult pageResult = response.readEntity(ThemePageResult.class);
-            GetThemesResponseDTO getThemesResponseDTO = responseMapper.getThemesResponseMapper(pageResult);
-            return Response.ok(getThemesResponseDTO).build();
-        } catch (WebApplicationException ex) {
-            return Response.status(ex.getResponse().getStatus())
-                    .entity(problemDetailMapper.map(ex.getResponse().readEntity(ProblemDetailResponse.class)))
-                    .build();
-        }
+        Response response = client.getThemes(pageNumber, pageSize);
+        ThemePageResult pageResult = response.readEntity(ThemePageResult.class);
+        GetThemesResponseDTO getThemesResponseDTO = responseMapper.getThemesResponseMapper(pageResult);
+        return Response.ok(getThemesResponseDTO).build();
     }
 
     @Override
