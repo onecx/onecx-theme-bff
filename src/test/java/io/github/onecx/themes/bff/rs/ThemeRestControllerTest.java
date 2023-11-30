@@ -24,7 +24,7 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @LogService
-public class ThemeRestControllerTest extends AbstractTest {
+class ThemeRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
@@ -237,6 +237,30 @@ public class ThemeRestControllerTest extends AbstractTest {
     }
 
     @Test
+    void searchThemeByEmptyCriteriaTest() {
+
+        ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/internal/themes/search").withMethod(HttpMethod.POST))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(problemDetailResponse)));
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .post("/themes/search")
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProblemDetailResponse.class);
+
+        Assertions.assertNotNull(output);
+    }
+
+    @Test
     void updateThemeTest() {
         String testId = "testId";
         UpdateTheme updateTheme = new UpdateTheme();
@@ -316,7 +340,7 @@ public class ThemeRestControllerTest extends AbstractTest {
     }
 
     @Test
-    void serverExceptionMapperTest() {
+    void getThemeByIdNotFoundTest() {
         String notFoundId = "notFound";
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + notFoundId).withMethod(HttpMethod.GET))
@@ -330,7 +354,34 @@ public class ThemeRestControllerTest extends AbstractTest {
                 .get("/themes/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
-        System.out.println(output.toString());
+        Assertions.assertNotNull(output);
+    }
+
+    @Test
+    void serverConstraintTest() {
+        ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
+        problemDetailResponse.setErrorCode("400");
+        CreateTheme createTheme = new CreateTheme();
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(createTheme)))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(problemDetailResponse)));
+
+        CreateThemeRequestDTO createThemeRequestDTO = new CreateThemeRequestDTO();
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(createThemeRequestDTO)
+                .post("/themes")
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProblemDetailResponseDTO.class);
+
         Assertions.assertNotNull(output);
     }
 }

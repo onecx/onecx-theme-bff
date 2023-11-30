@@ -135,6 +135,7 @@ paths:
       description: Search themes by criteria
       operationId: searchThemes
       requestBody:
+        required: true
         content:
           application/json:
             schema:
