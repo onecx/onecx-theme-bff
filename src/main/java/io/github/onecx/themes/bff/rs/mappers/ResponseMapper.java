@@ -1,7 +1,5 @@
 package io.github.onecx.themes.bff.rs.mappers;
 
-import java.util.stream.Collectors;
-
 import jakarta.inject.Inject;
 
 import org.mapstruct.Mapper;
@@ -29,7 +27,7 @@ public class ResponseMapper {
 
     public GetThemesResponseDTO getThemesResponseMapper(ThemePageResult pageResult) {
         GetThemesResponseDTO responseDTO = new GetThemesResponseDTO();
-        responseDTO.setStream(pageResult.getStream().stream().map(theme -> mapper.map(theme)).collect(Collectors.toList()));
+        responseDTO.setStream(pageResult.getStream().stream().map(theme -> mapper.map(theme)).toList());
         responseDTO.setNumber(pageResult.getNumber());
         responseDTO.setSize(pageResult.getSize());
         responseDTO.setTotalElements(pageResult.getTotalElements());
@@ -39,7 +37,7 @@ public class ResponseMapper {
 
     public SearchThemeResponseDTO searchThemeResponseMapper(ThemePageResult pageResult) {
         SearchThemeResponseDTO responseDTO = new SearchThemeResponseDTO();
-        responseDTO.setStream(pageResult.getStream().stream().map(theme -> mapper.map(theme)).collect(Collectors.toList()));
+        responseDTO.setStream(pageResult.getStream().stream().map(theme -> mapper.map(theme)).toList());
         responseDTO.setNumber(pageResult.getNumber());
         responseDTO.setSize(pageResult.getSize());
         responseDTO.setTotalElements(pageResult.getTotalElements());
