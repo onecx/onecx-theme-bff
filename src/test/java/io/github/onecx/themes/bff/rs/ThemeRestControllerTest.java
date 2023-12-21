@@ -5,6 +5,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.ws.rs.HttpMethod;
@@ -19,11 +20,14 @@ import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.io.github.onecx.theme.bff.clients.model.*;
 import gen.io.github.onecx.theme.bff.rs.internal.model.*;
+import io.github.onecx.themes.bff.rs.controllers.ThemeRestController;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @LogService
+@TestHTTPEndpoint(ThemeRestController.class)
 class ThemeRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
@@ -36,6 +40,14 @@ class ThemeRestControllerTest extends AbstractTest {
         data.setName("test-name");
         data.setDescription("this is a test theme");
 
+        WorkspaceInfoList workspaces = new WorkspaceInfoList();
+        List<WorkspaceInfo> workspaceList = new ArrayList<>();
+        WorkspaceInfo workspace = new WorkspaceInfo();
+        workspace.setWorkspaceName("workspace1");
+        workspace.setDescription("description1");
+        workspaceList.add(workspace);
+        workspaces.setWorkspaces(workspaceList);
+
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
                 .withPriority(100)
@@ -43,11 +55,18 @@ class ThemeRestControllerTest extends AbstractTest {
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
+        // create mock rest endpoint for workspace api
+        mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(workspaces)));
+
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", data.getId())
-                .get("/themes/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -56,6 +75,46 @@ class ThemeRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getId(), output.getResource().getId());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
+        Assertions.assertEquals(workspace.getWorkspaceName(), output.getWorkspaces().get(0).getWorkspaceName());
+        Assertions.assertEquals(workspace.getDescription(), output.getWorkspaces().get(0).getDescription());
+    }
+
+    @Test
+    void getThemeByIdNoWorkspacesTest() {
+
+        Theme data = new Theme();
+        data.setId("test-id-1");
+        data.setName("test-name");
+        data.setDescription("this is a test theme");
+        WorkspaceInfoList workspaces = new WorkspaceInfoList();
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(data)));
+
+        // create mock rest endpoint for workspace api
+        mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withBody(JsonBody.json(workspaces)));
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", data.getId())
+                .get("/{id}")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetThemeResponseDTO.class);
+
+        Assertions.assertNotNull(output.getResource());
+        Assertions.assertEquals(data.getId(), output.getResource().getId());
+        Assertions.assertEquals(data.getName(), output.getResource().getName());
+        Assertions.assertNull(output.getWorkspaces());
     }
 
     @Test
@@ -73,10 +132,9 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
-                .delete("/themes/{id}")
+                .delete("/{id}")
                 .then()
-                .statusCode(Response.Status.NO_CONTENT.getStatusCode())
-                .contentType(APPLICATION_JSON);
+                .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
 
     @Test
@@ -103,7 +161,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(input)
-                .post("/themes")
+                .post()
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -116,9 +174,8 @@ class ThemeRestControllerTest extends AbstractTest {
     @Test
     void createThemeFailTest() {
         CreateTheme data = new CreateTheme();
-
         ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
-        problemDetailResponse.setErrorCode(Response.Status.BAD_REQUEST.toString());
+        problemDetailResponse.setErrorCode("CONSTRAINT_VIOLATIONS");
         mockServerClient.reset();
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
@@ -136,7 +193,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(input)
-                .post("/themes")
+                .post()
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -173,7 +230,7 @@ class ThemeRestControllerTest extends AbstractTest {
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .get("/themes")
+                .get()
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -224,7 +281,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(searchThemeRequestDTO)
-                .post("/themes/search")
+                .post("/search")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -251,7 +308,7 @@ class ThemeRestControllerTest extends AbstractTest {
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .post("/themes/search")
+                .post("/search")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -292,7 +349,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
-                .put("/themes/{id}")
+                .put("/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -329,7 +386,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
-                .put("/themes/{id}")
+                .put("/{id}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -351,7 +408,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", notFoundId)
-                .get("/themes/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
@@ -371,12 +428,14 @@ class ThemeRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(problemDetailResponse)));
 
         CreateThemeRequestDTO createThemeRequestDTO = new CreateThemeRequestDTO();
+        ThemeUpdateCreateDTO themeUpdateCreateDTO = new ThemeUpdateCreateDTO();
+        createThemeRequestDTO.setResource(themeUpdateCreateDTO);
 
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(createThemeRequestDTO)
-                .post("/themes")
+                .post()
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
