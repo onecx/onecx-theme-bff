@@ -235,10 +235,10 @@ components:
       properties:
         resource:
           $ref: '#/components/schemas/Theme'
-        portals:
+        workspaces:
           type: array
           items:
-            type: object
+            $ref: '#/components/schemas/Workspace'
     GetThemesResponse:
       allOf: # Combines the PagingResponse and the Resources
         - $ref: '#/components/schemas/PagingResponse'
@@ -352,6 +352,13 @@ components:
         totalPages:
           format: int64
           type: integer
+    Workspace:
+      type: object
+      properties:
+        workspaceName:
+          type: string
+        description:
+          type: string
   parameters:
     pageNumber:
       in: query

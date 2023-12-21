@@ -13,6 +13,7 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.io.github.onecx.theme.bff.clients.api.ThemesInternalApi;
+import gen.io.github.onecx.theme.bff.clients.api.WorkspaceExternalApi;
 import gen.io.github.onecx.theme.bff.clients.model.*;
 import gen.io.github.onecx.theme.bff.rs.internal.ThemesApiService;
 import gen.io.github.onecx.theme.bff.rs.internal.model.*;
@@ -27,6 +28,10 @@ public class ThemeRestController implements ThemesApiService {
     @Inject
     @RestClient
     ThemesInternalApi client;
+
+    @Inject
+    @RestClient
+    WorkspaceExternalApi workspaceClient;
 
     @Inject
     ThemeMapper mapper;
@@ -59,8 +64,11 @@ public class ThemeRestController implements ThemesApiService {
     @Override
     public Response getThemeById(String id) {
         try (Response response = client.getThemeById(id)) {
-            GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(response.readEntity(Theme.class));
-            return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
+            try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(response.readEntity(Theme.class).getName())) {
+                GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(response.readEntity(Theme.class),
+                        workspaceResponse.readEntity(WorkspaceInfoList.class));
+                return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
+            }
         }
     }
 

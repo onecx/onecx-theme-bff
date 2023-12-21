@@ -5,6 +5,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.ws.rs.HttpMethod;
@@ -39,12 +40,27 @@ class ThemeRestControllerTest extends AbstractTest {
         data.setName("test-name");
         data.setDescription("this is a test theme");
 
+        WorkspaceInfoList workspaces = new WorkspaceInfoList();
+        List<WorkspaceInfo> workspaceList = new ArrayList<>();
+        WorkspaceInfo workspace = new WorkspaceInfo();
+        workspace.setWorkspaceName("workspace1");
+        workspace.setDescription("description1");
+        workspaceList.add(workspace);
+        workspaces.setWorkspaces(workspaceList);
+
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
+
+        // create mock rest endpoint for workspace api
+        mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(workspaces)));
 
         var output = given()
                 .when()
@@ -59,6 +75,46 @@ class ThemeRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getId(), output.getResource().getId());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
+        Assertions.assertEquals(workspace.getWorkspaceName(), output.getWorkspaces().get(0).getWorkspaceName());
+        Assertions.assertEquals(workspace.getDescription(), output.getWorkspaces().get(0).getDescription());
+    }
+
+    @Test
+    void getThemeByIdNoWorkspacesTest() {
+
+        Theme data = new Theme();
+        data.setId("test-id-1");
+        data.setName("test-name");
+        data.setDescription("this is a test theme");
+        WorkspaceInfoList workspaces = new WorkspaceInfoList();
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(data)));
+
+        // create mock rest endpoint for workspace api
+        mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withBody(JsonBody.json(workspaces)));
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", data.getId())
+                .get("/{id}")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetThemeResponseDTO.class);
+
+        Assertions.assertNotNull(output.getResource());
+        Assertions.assertEquals(data.getId(), output.getResource().getId());
+        Assertions.assertEquals(data.getName(), output.getResource().getName());
+        Assertions.assertNull(output.getWorkspaces());
     }
 
     @Test

@@ -19,11 +19,10 @@ public interface ThemeMapper {
     @Mapping(source = ".", target = "resource")
     UpdateThemeResponseDTO map(Theme theme);
 
-    @Mapping(source = ".", target = "resource")
-    @Mapping(target = "removePortalsItem", ignore = true)
-    @Mapping(target = "portals", ignore = true)
-    //remove after workspace api is implemented
-    GetThemeResponseDTO getThemeResponseDTOMapper(Theme theme);
+    @Mapping(source = "theme", target = "resource")
+    @Mapping(source = "workspaceInfoList.workspaces", target = "workspaces")
+    @Mapping(target = "removeWorkspacesItem", ignore = true)
+    GetThemeResponseDTO getThemeResponseDTOMapper(Theme theme, WorkspaceInfoList workspaceInfoList);
 
     @Mapping(source = ".", target = "resource")
     CreateThemeResponseDTO createThemeResponseDTOMapper(ThemeDTO dto);
@@ -36,4 +35,5 @@ public interface ThemeMapper {
 
     @Mapping(source = "resource", target = ".")
     ThemeSearchCriteria mapSearchCriteria(SearchThemeRequestDTO searchThemeRequestDTO);
+
 }
