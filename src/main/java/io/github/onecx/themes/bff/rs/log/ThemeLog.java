@@ -16,9 +16,8 @@ public class ThemeLog implements LogParam {
     public List<Item> getClasses() {
         return List.of(
                 this.item(10, CreateThemeRequestDTO.class,
-                        x -> "CreateThemeRequestDTO[ name: " + (((CreateThemeRequestDTO) x).getResource() != null
-                                ? ((CreateThemeRequestDTO) x).getResource().getName()
-                                : "missing resource")
+                        x -> "CreateThemeRequestDTO[ name: " +
+                                ((CreateThemeRequestDTO) x).getResource().getName()
                                 + " ]"),
                 this.item(10, UpdateThemeRequestDTO.class,
                         x -> "UpdateThemeRequestDTO[ name: " + ((UpdateThemeRequestDTO) x).getResource().getName()

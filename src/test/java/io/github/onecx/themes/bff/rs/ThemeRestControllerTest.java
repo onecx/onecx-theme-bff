@@ -428,6 +428,8 @@ class ThemeRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(problemDetailResponse)));
 
         CreateThemeRequestDTO createThemeRequestDTO = new CreateThemeRequestDTO();
+        ThemeUpdateCreateDTO themeUpdateCreateDTO = new ThemeUpdateCreateDTO();
+        createThemeRequestDTO.setResource(themeUpdateCreateDTO);
 
         var output = given()
                 .when()
