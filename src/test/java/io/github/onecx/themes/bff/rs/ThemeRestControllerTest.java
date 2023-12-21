@@ -19,11 +19,14 @@ import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.io.github.onecx.theme.bff.clients.model.*;
 import gen.io.github.onecx.theme.bff.rs.internal.model.*;
+import io.github.onecx.themes.bff.rs.controllers.ThemeRestController;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @LogService
+@TestHTTPEndpoint(ThemeRestController.class)
 class ThemeRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
@@ -47,7 +50,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", data.getId())
-                .get("/themes/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -73,10 +76,9 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
-                .delete("/themes/{id}")
+                .delete("/{id}")
                 .then()
-                .statusCode(Response.Status.NO_CONTENT.getStatusCode())
-                .contentType(APPLICATION_JSON);
+                .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
 
     @Test
@@ -103,7 +105,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(input)
-                .post("/themes")
+                .post()
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -116,9 +118,8 @@ class ThemeRestControllerTest extends AbstractTest {
     @Test
     void createThemeFailTest() {
         CreateTheme data = new CreateTheme();
-
         ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
-        problemDetailResponse.setErrorCode(Response.Status.BAD_REQUEST.toString());
+        problemDetailResponse.setErrorCode("CONSTRAINT_VIOLATIONS");
         mockServerClient.reset();
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
@@ -136,7 +137,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(input)
-                .post("/themes")
+                .post()
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -173,7 +174,7 @@ class ThemeRestControllerTest extends AbstractTest {
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .get("/themes")
+                .get()
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -224,7 +225,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(searchThemeRequestDTO)
-                .post("/themes/search")
+                .post("/search")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -251,7 +252,7 @@ class ThemeRestControllerTest extends AbstractTest {
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .post("/themes/search")
+                .post("/search")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -292,7 +293,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
-                .put("/themes/{id}")
+                .put("/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -329,7 +330,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
-                .put("/themes/{id}")
+                .put("/{id}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -351,7 +352,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", notFoundId)
-                .get("/themes/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
@@ -376,7 +377,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(createThemeRequestDTO)
-                .post("/themes")
+                .post()
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)

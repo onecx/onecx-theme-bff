@@ -1,4 +1,4 @@
-package io.github.onecx.themes.bff.rs;
+package io.github.onecx.themes.bff.rs.controllers;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -18,7 +18,6 @@ import gen.io.github.onecx.theme.bff.rs.internal.ThemesApiService;
 import gen.io.github.onecx.theme.bff.rs.internal.model.*;
 import io.github.onecx.themes.bff.rs.mappers.ExceptionMapper;
 import io.github.onecx.themes.bff.rs.mappers.ProblemDetailMapper;
-import io.github.onecx.themes.bff.rs.mappers.ResponseMapper;
 import io.github.onecx.themes.bff.rs.mappers.ThemeMapper;
 
 @ApplicationScoped
@@ -33,9 +32,6 @@ public class ThemeRestController implements ThemesApiService {
     ThemeMapper mapper;
 
     @Inject
-    ResponseMapper responseMapper;
-
-    @Inject
     ProblemDetailMapper problemDetailMapper;
 
     @Inject
@@ -43,9 +39,9 @@ public class ThemeRestController implements ThemesApiService {
 
     @Override
     public Response createTheme(CreateThemeRequestDTO createThemeRequestDTO) {
-        try (Response response = client.createNewTheme(mapper.mapCreate(createThemeRequestDTO.getResource()))) {
-            ThemeDTO themeDTO = response.readEntity(ThemeDTO.class);
-            CreateThemeResponseDTO createThemeResponseDTO = responseMapper.createThemeResponseDTOMapper(themeDTO);
+        try (Response response = client.createNewTheme(mapper.mapCreate(createThemeRequestDTO))) {
+            CreateThemeResponseDTO createThemeResponseDTO = mapper
+                    .createThemeResponseDTOMapper(response.readEntity(ThemeDTO.class));
             return Response.status(response.getStatus()).entity(createThemeResponseDTO).build();
         } catch (WebApplicationException ex) {
             return Response.status(ex.getResponse().getStatus())
@@ -56,47 +52,41 @@ public class ThemeRestController implements ThemesApiService {
     @Override
     public Response deleteTheme(String id) {
         try (Response response = client.deleteTheme(id)) {
-            return Response.fromResponse(client.deleteTheme(id)).build();
+            return Response.status(response.getStatus()).build();
         }
     }
 
     @Override
     public Response getThemeById(String id) {
         try (Response response = client.getThemeById(id)) {
-            ThemeDTO themeDTO = mapper.map(response.readEntity(Theme.class));
-            GetThemeResponseDTO getThemeResponseDTO = responseMapper.getThemeResponseDTOMapper(themeDTO);
-            return Response.ok(getThemeResponseDTO).build();
+            GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(response.readEntity(Theme.class));
+            return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
         }
     }
 
     @Override
     public Response getThemes(Integer pageNumber, Integer pageSize) {
         try (Response response = client.getThemes(pageNumber, pageSize)) {
-            ThemePageResult pageResult = response.readEntity(ThemePageResult.class);
-            GetThemesResponseDTO getThemesResponseDTO = responseMapper.getThemesResponseMapper(pageResult);
-            return Response.ok(getThemesResponseDTO).build();
+            GetThemesResponseDTO getThemesResponseDTO = mapper
+                    .getThemesResponseMapper(response.readEntity(ThemePageResult.class));
+            return Response.status(response.getStatus()).entity(getThemesResponseDTO).build();
         }
     }
 
     @Override
     public Response searchThemes(SearchThemeRequestDTO searchThemeRequestDTO) {
-        ThemeSearchCriteria searchCriteria = new ThemeSearchCriteria();
-        searchCriteria.setName(searchThemeRequestDTO.getResource().getName());
-        searchCriteria.setPageNumber(searchThemeRequestDTO.getPageNumber());
-        searchCriteria.setPageSize(searchThemeRequestDTO.getPageSize());
-        try (Response response = client.searchThemes(searchCriteria)) {
-            ThemePageResult searchResult = response.readEntity(ThemePageResult.class);
-            SearchThemeResponseDTO searchThemeResponseDTO = responseMapper.searchThemeResponseMapper(searchResult);
-            return Response.ok(searchThemeResponseDTO).build();
+        try (Response response = client.searchThemes(mapper.mapSearchCriteria(searchThemeRequestDTO))) {
+            SearchThemeResponseDTO searchThemeResponseDTO = mapper
+                    .searchThemeResponseMapper(response.readEntity(ThemePageResult.class));
+            return Response.status(response.getStatus()).entity(searchThemeResponseDTO).build();
         }
     }
 
     @Override
     public Response updateTheme(String id, UpdateThemeRequestDTO updateThemeRequestDTO) {
-        try (Response response = client.updateTheme(id, mapper.mapUpdate(updateThemeRequestDTO.getResource()))) {
+        try (Response response = client.updateTheme(id, mapper.mapUpdate(updateThemeRequestDTO))) {
             try (Response updatedThemeResponse = client.getThemeById(id)) {
-                UpdateThemeResponseDTO updateThemeResponseDTO = new UpdateThemeResponseDTO();
-                updateThemeResponseDTO.setResource(mapper.map(updatedThemeResponse.readEntity(Theme.class)));
+                UpdateThemeResponseDTO updateThemeResponseDTO = mapper.map(updatedThemeResponse.readEntity(Theme.class));
                 return Response.ok(updateThemeResponseDTO).build();
             }
         } catch (WebApplicationException ex) {

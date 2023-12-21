@@ -19,9 +19,9 @@ import gen.io.github.onecx.theme.bff.rs.internal.model.ProblemDetailParamDTO;
 import gen.io.github.onecx.theme.bff.rs.internal.model.ProblemDetailResponseDTO;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
-public abstract class ExceptionMapper {
+public interface ExceptionMapper {
 
-    public RestResponse<ProblemDetailResponseDTO> constraint(ConstraintViolationException ex) {
+    default RestResponse<ProblemDetailResponseDTO> constraint(ConstraintViolationException ex) {
         var dto = exception("CONSTRAINT_VIOLATIONS", ex.getMessage());
         dto.setInvalidParams(createErrorValidationResponse(ex.getConstraintViolations()));
         return RestResponse.status(Response.Status.BAD_REQUEST, dto);
@@ -31,9 +31,9 @@ public abstract class ExceptionMapper {
     @Mapping(target = "params", ignore = true)
     @Mapping(target = "invalidParams", ignore = true)
     @Mapping(target = "removeInvalidParamsItem", ignore = true)
-    public abstract ProblemDetailResponseDTO exception(String errorCode, String detail);
+    ProblemDetailResponseDTO exception(String errorCode, String detail);
 
-    public List<ProblemDetailParamDTO> map(Map<String, Object> params) {
+    default List<ProblemDetailParamDTO> map(Map<String, Object> params) {
         if (params == null) {
             return List.of();
         }
@@ -47,14 +47,14 @@ public abstract class ExceptionMapper {
         }).toList();
     }
 
-    public abstract List<ProblemDetailInvalidParamDTO> createErrorValidationResponse(
+    List<ProblemDetailInvalidParamDTO> createErrorValidationResponse(
             Set<ConstraintViolation<?>> constraintViolation);
 
     @Mapping(target = "name", source = "propertyPath")
     @Mapping(target = "message", source = "message")
-    public abstract ProblemDetailInvalidParamDTO createError(ConstraintViolation<?> constraintViolation);
+    ProblemDetailInvalidParamDTO createError(ConstraintViolation<?> constraintViolation);
 
-    public String mapPath(Path path) {
+    default String mapPath(Path path) {
         return path.toString();
     }
 }
