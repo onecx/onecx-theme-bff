@@ -23,7 +23,7 @@ public class ThemeLog implements LogParam {
                         x -> "UpdateThemeRequestDTO[ name: " + ((UpdateThemeRequestDTO) x).getResource().getName()
                                 + " ]"),
                 this.item(10, SearchThemeRequestDTO.class,
-                        x -> "SearchThemeRequestDTO[ name: " + ((SearchThemeRequestDTO) x).getResource().getName()
+                        x -> "SearchThemeRequestDTO[ name: " + ((SearchThemeRequestDTO) x).getName()
                                 + " ]"));
     }
 }

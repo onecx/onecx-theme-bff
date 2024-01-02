@@ -33,7 +33,6 @@ public interface ThemeMapper {
     @Mapping(target = "removeStreamItem", ignore = true)
     SearchThemeResponseDTO searchThemeResponseMapper(ThemePageResult pageResult);
 
-    @Mapping(source = "resource", target = ".")
     ThemeSearchCriteria mapSearchCriteria(SearchThemeRequestDTO searchThemeRequestDTO);
 
 }

@@ -73,6 +73,17 @@ public class ThemeRestController implements ThemesApiService {
     }
 
     @Override
+    public Response getThemeByName(String name) {
+        try (Response response = client.getThemeByThemeDefinitionName(name)) {
+            try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(response.readEntity(Theme.class).getName())) {
+                GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(response.readEntity(Theme.class),
+                        workspaceResponse.readEntity(WorkspaceInfoList.class));
+                return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
+            }
+        }
+    }
+
+    @Override
     public Response getThemes(Integer pageNumber, Integer pageSize) {
         try (Response response = client.getThemes(pageNumber, pageSize)) {
             GetThemesResponseDTO getThemesResponseDTO = mapper
