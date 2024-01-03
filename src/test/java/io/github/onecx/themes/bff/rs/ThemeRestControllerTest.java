@@ -5,8 +5,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.Response;
@@ -456,6 +455,75 @@ class ThemeRestControllerTest extends AbstractTest {
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
+    }
+
+    @Test
+    void exportImportThemesTest() {
+        Set<String> themeNames = new HashSet<>();
+        ExportThemeRequest exRequest = new ExportThemeRequest();
+        exRequest.setNames(themeNames);
+        exRequest.addNamesItem("testTheme");
+
+        EximTheme exportedTheme = new EximTheme();
+        exportedTheme.setDescription("exported theme");
+
+        Map<String, EximTheme> themesToExport = new HashMap<>();
+        themesToExport.put("testTheme", exportedTheme);
+
+        ThemeSnapshot exResponse = new ThemeSnapshot();
+        exResponse.setThemes(themesToExport);
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/exim/v1/themes/export").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(exRequest)))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(exResponse)));
+
+        ExportThemeRequestDTO exRequestDTO = new ExportThemeRequestDTO();
+        exRequestDTO.setNames(themeNames);
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(exRequestDTO)
+                .post("/export")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ThemeSnapshotDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals(output.getThemes().get("testTheme").getDescription(), exportedTheme.getDescription());
+
+        ImportThemeResponse importThemeResponse = new ImportThemeResponse();
+        Map<String, ImportThemeResponseStatus> importedThemes = new HashMap<>();
+        importedThemes.put("testTheme", ImportThemeResponseStatus.CREATED);
+        importThemeResponse.setThemes(importedThemes);
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/exim/v1/themes/import").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(exResponse)))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(importThemeResponse)));
+
+        var importOutput = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(output)
+                .post("/import")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ImportThemeResponseDTO.class);
+
+        Assertions.assertNotNull(importOutput);
+        Assertions.assertEquals(importOutput.getThemes().get("testTheme").toString(),
+                ImportThemeResponseStatus.CREATED.toString());
+
     }
 
     @Test
