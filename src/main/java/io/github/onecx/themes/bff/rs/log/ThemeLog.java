@@ -6,9 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import org.tkit.quarkus.log.cdi.LogParam;
 
-import gen.io.github.onecx.theme.bff.rs.internal.model.CreateThemeRequestDTO;
-import gen.io.github.onecx.theme.bff.rs.internal.model.SearchThemeRequestDTO;
-import gen.io.github.onecx.theme.bff.rs.internal.model.UpdateThemeRequestDTO;
+import gen.io.github.onecx.theme.bff.rs.internal.model.*;
 
 @ApplicationScoped
 public class ThemeLog implements LogParam {
@@ -23,7 +21,13 @@ public class ThemeLog implements LogParam {
                         x -> "UpdateThemeRequestDTO[ name: " + ((UpdateThemeRequestDTO) x).getResource().getName()
                                 + " ]"),
                 this.item(10, SearchThemeRequestDTO.class,
-                        x -> "SearchThemeRequestDTO[ name: " + ((SearchThemeRequestDTO) x).getResource().getName()
+                        x -> "SearchThemeRequestDTO[ name: " + ((SearchThemeRequestDTO) x).getName()
+                                + " ]"),
+                this.item(10, ExportThemeRequestDTO.class,
+                        x -> "ExportThemeRequestDTO[ name: " + ((ExportThemeRequestDTO) x).getNames().toString()
+                                + " ]"),
+                this.item(10, ThemeSnapshotDTO.class,
+                        x -> "ThemeSnapshotDTO[ name: " + ((ThemeSnapshotDTO) x).getThemes().toString()
                                 + " ]"));
     }
 }

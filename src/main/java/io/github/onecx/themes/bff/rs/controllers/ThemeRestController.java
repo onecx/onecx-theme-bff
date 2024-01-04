@@ -12,6 +12,7 @@ import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
+import gen.io.github.onecx.theme.bff.clients.api.ThemesExportImportApi;
 import gen.io.github.onecx.theme.bff.clients.api.ThemesInternalApi;
 import gen.io.github.onecx.theme.bff.clients.api.WorkspaceExternalApi;
 import gen.io.github.onecx.theme.bff.clients.model.*;
@@ -32,6 +33,10 @@ public class ThemeRestController implements ThemesApiService {
     @Inject
     @RestClient
     WorkspaceExternalApi workspaceClient;
+
+    @Inject
+    @RestClient
+    ThemesExportImportApi eximClient;
 
     @Inject
     ThemeMapper mapper;
@@ -62,8 +67,26 @@ public class ThemeRestController implements ThemesApiService {
     }
 
     @Override
+    public Response exportThemes(ExportThemeRequestDTO exportThemeRequestDTO) {
+        try (Response response = eximClient.exportThemes(mapper.map(exportThemeRequestDTO))) {
+            return Response.status(response.getStatus()).entity(mapper.map(response.readEntity(ThemeSnapshot.class))).build();
+        }
+    }
+
+    @Override
     public Response getThemeById(String id) {
         try (Response response = client.getThemeById(id)) {
+            try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(response.readEntity(Theme.class).getName())) {
+                GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(response.readEntity(Theme.class),
+                        workspaceResponse.readEntity(WorkspaceInfoList.class));
+                return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
+            }
+        }
+    }
+
+    @Override
+    public Response getThemeByName(String name) {
+        try (Response response = client.getThemeByThemeDefinitionName(name)) {
             try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(response.readEntity(Theme.class).getName())) {
                 GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(response.readEntity(Theme.class),
                         workspaceResponse.readEntity(WorkspaceInfoList.class));
@@ -78,6 +101,14 @@ public class ThemeRestController implements ThemesApiService {
             GetThemesResponseDTO getThemesResponseDTO = mapper
                     .getThemesResponseMapper(response.readEntity(ThemePageResult.class));
             return Response.status(response.getStatus()).entity(getThemesResponseDTO).build();
+        }
+    }
+
+    @Override
+    public Response importThemes(ThemeSnapshotDTO themeSnapshotDTO) {
+        try (Response response = eximClient.importThemes(mapper.map(themeSnapshotDTO))) {
+            return Response.status(response.getStatus())
+                    .entity(mapper.map(response.readEntity(ImportThemeResponse.class))).build();
         }
     }
 

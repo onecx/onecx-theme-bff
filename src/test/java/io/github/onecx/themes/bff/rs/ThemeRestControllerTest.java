@@ -5,13 +5,13 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.model.JsonBody;
@@ -32,9 +32,13 @@ class ThemeRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
+    @BeforeEach
+    void resetMockServer() {
+        mockServerClient.reset();
+    }
+
     @Test
     void getThemeByIdTest() {
-
         Theme data = new Theme();
         data.setId("test-id-1");
         data.setName("test-name");
@@ -74,6 +78,49 @@ class ThemeRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getId(), output.getResource().getId());
+        Assertions.assertEquals(data.getName(), output.getResource().getName());
+        Assertions.assertEquals(workspace.getWorkspaceName(), output.getWorkspaces().get(0).getWorkspaceName());
+        Assertions.assertEquals(workspace.getDescription(), output.getWorkspaces().get(0).getDescription());
+    }
+
+    @Test
+    void getThemeByNameTest() {
+
+        Theme data = new Theme();
+        data.setName("test-name");
+
+        WorkspaceInfoList workspaces = new WorkspaceInfoList();
+        List<WorkspaceInfo> workspaceList = new ArrayList<>();
+        WorkspaceInfo workspace = new WorkspaceInfo();
+        workspace.setWorkspaceName("workspace1");
+        workspace.setDescription("description1");
+        workspaceList.add(workspace);
+        workspaces.setWorkspaces(workspaceList);
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/internal/themes/name/" + data.getName()).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(data)));
+
+        // create mock rest endpoint for workspace api
+        mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(workspaces)));
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", data.getName())
+                .get("/name/{name}")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetThemeResponseDTO.class);
+
+        Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
         Assertions.assertEquals(workspace.getWorkspaceName(), output.getWorkspaces().get(0).getWorkspaceName());
         Assertions.assertEquals(workspace.getDescription(), output.getWorkspaces().get(0).getDescription());
@@ -260,14 +307,10 @@ class ThemeRestControllerTest extends AbstractTest {
         data.setTotalPages(1L);
         data.setStream(List.of(t1));
 
-        ThemeDTO input = new ThemeDTO();
-        input.setName("test");
-        input.setId("1");
-
         SearchThemeRequestDTO searchThemeRequestDTO = new SearchThemeRequestDTO();
         searchThemeRequestDTO.setPageNumber(1);
         searchThemeRequestDTO.setPageSize(1);
-        searchThemeRequestDTO.setResource(input);
+        searchThemeRequestDTO.setName("test");
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/search").withMethod(HttpMethod.POST)
@@ -412,6 +455,75 @@ class ThemeRestControllerTest extends AbstractTest {
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
+    }
+
+    @Test
+    void exportImportThemesTest() {
+        Set<String> themeNames = new HashSet<>();
+        ExportThemeRequest exRequest = new ExportThemeRequest();
+        exRequest.setNames(themeNames);
+        exRequest.addNamesItem("testTheme");
+
+        EximTheme exportedTheme = new EximTheme();
+        exportedTheme.setDescription("exported theme");
+
+        Map<String, EximTheme> themesToExport = new HashMap<>();
+        themesToExport.put("testTheme", exportedTheme);
+
+        ThemeSnapshot exResponse = new ThemeSnapshot();
+        exResponse.setThemes(themesToExport);
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/exim/v1/themes/export").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(exRequest)))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(exResponse)));
+
+        ExportThemeRequestDTO exRequestDTO = new ExportThemeRequestDTO();
+        exRequestDTO.setNames(themeNames);
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(exRequestDTO)
+                .post("/export")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ThemeSnapshotDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals(output.getThemes().get("testTheme").getDescription(), exportedTheme.getDescription());
+
+        ImportThemeResponse importThemeResponse = new ImportThemeResponse();
+        Map<String, ImportThemeResponseStatus> importedThemes = new HashMap<>();
+        importedThemes.put("testTheme", ImportThemeResponseStatus.CREATED);
+        importThemeResponse.setThemes(importedThemes);
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/exim/v1/themes/import").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(exResponse)))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(importThemeResponse)));
+
+        var importOutput = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(output)
+                .post("/import")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ImportThemeResponseDTO.class);
+
+        Assertions.assertNotNull(importOutput);
+        Assertions.assertEquals(importOutput.getThemes().get("testTheme").toString(),
+                ImportThemeResponseStatus.CREATED.toString());
+
     }
 
     @Test

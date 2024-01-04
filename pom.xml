@@ -157,6 +157,21 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>theme-svc-exim-v1</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>
+                                https://raw.githubusercontent.com/onecx/onecx-theme-svc/main/src/main/openapi/onecx-theme-exim-v1-openapi.yaml
+                            </url>
+                            <outputDirectory>target/tmp/openapi</outputDirectory>
+                            <outputFileName>onecx-theme-svc-exim-v1.yaml</outputFileName>
+                            <skipCache>true</skipCache>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>workspace-v1</id>
                         <phase>generate-resources</phase>
                         <goals>

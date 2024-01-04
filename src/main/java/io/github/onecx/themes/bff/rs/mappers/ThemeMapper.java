@@ -33,7 +33,15 @@ public interface ThemeMapper {
     @Mapping(target = "removeStreamItem", ignore = true)
     SearchThemeResponseDTO searchThemeResponseMapper(ThemePageResult pageResult);
 
-    @Mapping(source = "resource", target = ".")
     ThemeSearchCriteria mapSearchCriteria(SearchThemeRequestDTO searchThemeRequestDTO);
 
+    ExportThemeRequest map(ExportThemeRequestDTO exportThemeRequestDTO);
+
+    @Mapping(target = "removeThemesItem", ignore = true)
+    ThemeSnapshotDTO map(ThemeSnapshot themeSnapshot);
+
+    ThemeSnapshot map(ThemeSnapshotDTO themeSnapshot);
+
+    @Mapping(target = "removeThemesItem", ignore = true)
+    ImportThemeResponseDTO map(ImportThemeResponse response);
 }

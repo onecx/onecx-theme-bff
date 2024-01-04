@@ -128,6 +128,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /themes/name/{name}:
+    get:
+      tags:
+        - themes
+      description: Find theme by name including workspace
+      operationId: getThemeByName
+      parameters:
+        - $ref: '#/components/parameters/name'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetThemeResponse'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        "404":
+          description: Not Found
   /themes/search:
     post:
       tags:
@@ -157,6 +180,52 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Not Found
+  /themes/export:
+    post:
+      tags:
+        - themes
+      description: Export list of themes
+      operationId: exportThemes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportThemeRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemeSnapshot'
+        "404":
+          description: No themes founds
+  /themes/import:
+    post:
+      tags:
+        - themes
+      description: Import themes
+      operationId: importThemes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeSnapshot'
+      responses:
+        "200":
+          description: Import result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportThemeResponse'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
 components:
   schemas:
     Theme:
@@ -319,8 +388,8 @@ components:
     SearchThemeRequest:
       type: object
       properties:
-        resource:
-          $ref: '#/components/schemas/Theme'
+        name:
+          type: string
         pageNumber:
           type: integer
           format: int32
@@ -359,6 +428,63 @@ components:
           type: string
         description:
           type: string
+    ExportThemeRequest:
+      type: object
+      properties:
+        names:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+    ThemeSnapshot:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 10
+          description: ID of the request
+        created:
+          $ref: '#/components/schemas/OffsetDateTime'
+        themes:
+          type: object
+          nullable: false
+          additionalProperties:
+            $ref: '#/components/schemas/EximTheme'
+    ImportThemeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 10
+          description: ID of the request
+        themes:
+          additionalProperties:
+            $ref: '#/components/schemas/ImportThemeResponseStatus'
+    ImportThemeResponseStatus:
+      type: string
+      enum:
+        - UPDATE
+        - CREATED
+        - SKIP
+    EximTheme:
+      type: object
+      properties:
+        cssFile:
+          type: string
+        description:
+          type: string
+        assetsUrl:
+          type: string
+        logoUrl:
+          type: string
+        faviconUrl:
+          type: string
+        previewImageUrl:
+          type: string
+        assetsUpdateDate:
+          type: string
+        properties:
+          type: object
   parameters:
     pageNumber:
       in: query
@@ -379,6 +505,12 @@ components:
     id:
       in: path
       name: id
+      required: true
+      schema:
+        type: string
+    name:
+      in: path
+      name: name
       required: true
       schema:
         type: string
