@@ -76,22 +76,28 @@ public class ThemeRestController implements ThemesApiService {
     @Override
     public Response getThemeById(String id) {
         try (Response response = client.getThemeById(id)) {
-            try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(response.readEntity(Theme.class).getName())) {
-                GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(response.readEntity(Theme.class),
-                        workspaceResponse.readEntity(WorkspaceInfoList.class));
-                return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
+            Theme theme = response.readEntity(Theme.class);
+            WorkspaceInfoList workspaces = null;
+            try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(theme.getName())) {
+                workspaces = workspaceResponse.readEntity(WorkspaceInfoList.class);
+            } catch (WebApplicationException ex) {
             }
+            GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme, workspaces);
+            return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
         }
     }
 
     @Override
     public Response getThemeByName(String name) {
         try (Response response = client.getThemeByThemeDefinitionName(name)) {
-            try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(response.readEntity(Theme.class).getName())) {
-                GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(response.readEntity(Theme.class),
-                        workspaceResponse.readEntity(WorkspaceInfoList.class));
-                return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
+            Theme theme = response.readEntity(Theme.class);
+            WorkspaceInfoList workspaces = null;
+            try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(theme.getName())) {
+                workspaces = workspaceResponse.readEntity(WorkspaceInfoList.class);
+            } catch (WebApplicationException ex) {
             }
+            GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme, workspaces);
+            return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
         }
     }
 
