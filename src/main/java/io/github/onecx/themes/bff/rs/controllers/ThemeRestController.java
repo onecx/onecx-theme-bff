@@ -77,9 +77,9 @@ public class ThemeRestController implements ThemesApiService {
     public Response getThemeById(String id) {
         try (Response response = client.getThemeById(id)) {
             Theme theme = response.readEntity(Theme.class);
-            WorkspaceInfoList workspaces = null;
-            try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(theme.getName())) {
-                workspaces = workspaceResponse.readEntity(WorkspaceInfoList.class);
+            WorkspacePageResult workspaces = null;
+            try (Response workspaceResponse = workspaceClient.searchWorkspaces(mapper.map(theme.getName()))) {
+                workspaces = workspaceResponse.readEntity(WorkspacePageResult.class);
             } catch (WebApplicationException ex) {
             }
             GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme, workspaces);
@@ -91,9 +91,9 @@ public class ThemeRestController implements ThemesApiService {
     public Response getThemeByName(String name) {
         try (Response response = client.getThemeByThemeDefinitionName(name)) {
             Theme theme = response.readEntity(Theme.class);
-            WorkspaceInfoList workspaces = null;
-            try (Response workspaceResponse = workspaceClient.getWorkspaceInfos(theme.getName())) {
-                workspaces = workspaceResponse.readEntity(WorkspaceInfoList.class);
+            WorkspacePageResult workspaces = null;
+            try (Response workspaceResponse = workspaceClient.searchWorkspaces(mapper.map(theme.getName()))) {
+                workspaces = workspaceResponse.readEntity(WorkspacePageResult.class);
             } catch (WebApplicationException ex) {
             }
             GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme, workspaces);
