@@ -144,6 +144,7 @@ class ThemeRestControllerTest extends AbstractTest {
         workspace.setDescription("description1");
         workspaceList.add(workspace);
         workspaces.setStream(workspaceList);
+
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/name/" + data.getName()).withMethod(HttpMethod.GET))
                 .withPriority(100)
