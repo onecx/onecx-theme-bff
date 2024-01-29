@@ -20,9 +20,9 @@ public interface ThemeMapper {
     UpdateThemeResponseDTO map(Theme theme);
 
     @Mapping(source = "theme", target = "resource")
-    @Mapping(source = "workspaceInfoList.workspaces", target = "workspaces")
+    @Mapping(source = "workspacePageResult.stream", target = "workspaces")
     @Mapping(target = "removeWorkspacesItem", ignore = true)
-    GetThemeResponseDTO getThemeResponseDTOMapper(Theme theme, WorkspaceInfoList workspaceInfoList);
+    GetThemeResponseDTO getThemeResponseDTOMapper(Theme theme, WorkspacePageResult workspacePageResult);
 
     @Mapping(source = ".", target = "resource")
     CreateThemeResponseDTO createThemeResponseDTOMapper(ThemeDTO dto);
@@ -44,4 +44,9 @@ public interface ThemeMapper {
 
     @Mapping(target = "removeThemesItem", ignore = true)
     ImportThemeResponseDTO map(ImportThemeResponse response);
+
+    @Mapping(target = "themeName", source = "themeName")
+    @Mapping(target = "pageNumber", ignore = true)
+    @Mapping(target = "pageSize", ignore = true)
+    WorkspaceSearchCriteria map(String themeName);
 }

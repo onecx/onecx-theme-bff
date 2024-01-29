@@ -424,7 +424,7 @@ components:
     Workspace:
       type: object
       properties:
-        workspaceName:
+        name:
           type: string
         description:
           type: string

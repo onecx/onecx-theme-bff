@@ -44,14 +44,15 @@ class ThemeRestControllerTest extends AbstractTest {
         data.setName("test-name");
         data.setDescription("this is a test theme");
 
-        WorkspaceInfoList workspaces = new WorkspaceInfoList();
-        List<WorkspaceInfo> workspaceList = new ArrayList<>();
-        WorkspaceInfo workspace = new WorkspaceInfo();
-        workspace.setWorkspaceName("workspace1");
+        WorkspacePageResult workspaces = new WorkspacePageResult();
+        List<WorkspaceAbstract> workspaceList = new ArrayList<>();
+        WorkspaceAbstract workspace = new WorkspaceAbstract();
+        workspace.setName("workspace1");
         workspace.setDescription("description1");
         workspaceList.add(workspace);
-        workspaces.setWorkspaces(workspaceList);
-
+        workspaces.setStream(workspaceList);
+        WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
+        criteria.setThemeName(data.getName());
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
                 .withPriority(100)
@@ -60,7 +61,8 @@ class ThemeRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(data)));
 
         // create mock rest endpoint for workspace api
-        mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
+        mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(criteria)))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -79,7 +81,7 @@ class ThemeRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getId(), output.getResource().getId());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
-        Assertions.assertEquals(workspace.getWorkspaceName(), output.getWorkspaces().get(0).getWorkspaceName());
+        Assertions.assertEquals(workspace.getName(), output.getWorkspaces().get(0).getName());
         Assertions.assertEquals(workspace.getDescription(), output.getWorkspaces().get(0).getDescription());
     }
 
@@ -89,13 +91,15 @@ class ThemeRestControllerTest extends AbstractTest {
         Theme data = new Theme();
         data.setName("test-name");
 
-        WorkspaceInfoList workspaces = new WorkspaceInfoList();
-        List<WorkspaceInfo> workspaceList = new ArrayList<>();
-        WorkspaceInfo workspace = new WorkspaceInfo();
-        workspace.setWorkspaceName("workspace1");
+        WorkspacePageResult workspaces = new WorkspacePageResult();
+        List<WorkspaceAbstract> workspaceList = new ArrayList<>();
+        WorkspaceAbstract workspace = new WorkspaceAbstract();
+        workspace.setName("workspace1");
         workspace.setDescription("description1");
         workspaceList.add(workspace);
-        workspaces.setWorkspaces(workspaceList);
+        workspaces.setStream(workspaceList);
+        WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
+        criteria.setThemeName(data.getName());
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/name/" + data.getName()).withMethod(HttpMethod.GET))
                 .withPriority(100)
@@ -104,7 +108,8 @@ class ThemeRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(data)));
 
         // create mock rest endpoint for workspace api
-        mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
+        mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(criteria)))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -122,7 +127,7 @@ class ThemeRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
-        Assertions.assertEquals(workspace.getWorkspaceName(), output.getWorkspaces().get(0).getWorkspaceName());
+        Assertions.assertEquals(workspace.getName(), output.getWorkspaces().get(0).getName());
         Assertions.assertEquals(workspace.getDescription(), output.getWorkspaces().get(0).getDescription());
     }
 
@@ -132,13 +137,14 @@ class ThemeRestControllerTest extends AbstractTest {
         Theme data = new Theme();
         data.setName("test-name");
 
-        WorkspaceInfoList workspaces = new WorkspaceInfoList();
-        List<WorkspaceInfo> workspaceList = new ArrayList<>();
-        WorkspaceInfo workspace = new WorkspaceInfo();
-        workspace.setWorkspaceName("workspace1");
+        WorkspacePageResult workspaces = new WorkspacePageResult();
+        List<WorkspaceAbstract> workspaceList = new ArrayList<>();
+        WorkspaceAbstract workspace = new WorkspaceAbstract();
+        workspace.setName("workspace1");
         workspace.setDescription("description1");
         workspaceList.add(workspace);
-        workspaces.setWorkspaces(workspaceList);
+        workspaces.setStream(workspaceList);
+
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/name/" + data.getName()).withMethod(HttpMethod.GET))
                 .withPriority(100)
@@ -173,7 +179,7 @@ class ThemeRestControllerTest extends AbstractTest {
         data.setId("test-id-1");
         data.setName("test-name");
         data.setDescription("this is a test theme");
-        WorkspaceInfoList workspaces = new WorkspaceInfoList();
+        WorkspacePageResult workspaces = new WorkspacePageResult();
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
@@ -211,7 +217,6 @@ class ThemeRestControllerTest extends AbstractTest {
         data.setId("test-id-1");
         data.setName("test-name");
         data.setDescription("this is a test theme");
-        WorkspaceInfoList workspaces = new WorkspaceInfoList();
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
