@@ -94,13 +94,19 @@ public class ImageRestControllerTest {
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(imageInfoDTO)));
 
-        given()
+        var res = given()
                 .multiPart("image", file)
                 .contentType("multipart/form-data")
                 .when()
                 .post()
                 .then()
-                .statusCode(OK.getStatusCode());
+                .statusCode(OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ImageInfoDTO.class);
+
+        Assertions.assertNotNull(res);
+        Assertions.assertEquals(res.getId(), imageInfoDTO.getId());
+
     }
 
     @Test
@@ -124,26 +130,30 @@ public class ImageRestControllerTest {
 
     @Test
     void updateImage() {
-        String inputId = "11-111";
 
         File file = new File(ImageRestControllerTest.class.getResource("/META-INF/resources/Testimage.png").getFile());
 
         ImageInfoDTO imageInfoDTO = new ImageInfoDTO();
         imageInfoDTO.setId("11-111");
 
-        mockServerClient.when(request().withPath("/internal/images/" + inputId).withMethod(HttpMethod.PUT))
+        mockServerClient.when(request().withPath("/internal/images/" + imageInfoDTO.getId()).withMethod(HttpMethod.PUT))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(imageInfoDTO)));
 
-        given()
+        var res = given()
                 .multiPart("image", file)
                 .contentType("multipart/form-data")
                 .when()
-                .put(inputId)
+                .put(imageInfoDTO.getId())
                 .then()
-                .statusCode(CREATED.getStatusCode());
+                .statusCode(CREATED.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ImageInfoDTO.class);
+
+        Assertions.assertNotNull(res);
+        Assertions.assertEquals(res.getId(), imageInfoDTO.getId());
     }
 
     @Test
