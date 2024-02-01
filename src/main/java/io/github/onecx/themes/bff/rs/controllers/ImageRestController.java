@@ -1,5 +1,6 @@
 package io.github.onecx.themes.bff.rs.controllers;
 
+import java.io.File;
 import java.io.InputStream;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -40,8 +41,7 @@ public class ImageRestController implements ImagesApiService {
     @Override
     public Response getImage(String imageId) {
         try (Response response = imageApi.getImage(imageId)) {
-            ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
-            return Response.status(response.getStatus()).entity(imageInfoDTO).build();
+            return Response.status(Response.Status.OK).entity(response.readEntity(File.class)).build();
         }
     }
 
