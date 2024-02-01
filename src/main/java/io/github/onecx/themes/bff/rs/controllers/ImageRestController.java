@@ -2,8 +2,6 @@ package io.github.onecx.themes.bff.rs.controllers;
 
 import java.io.InputStream;
 
-import gen.io.github.onecx.theme.bff.clients.model.ImageInfo;
-import gen.io.github.onecx.theme.bff.rs.internal.model.ImageInfoDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -17,7 +15,9 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.io.github.onecx.theme.bff.clients.api.ImageApi;
+import gen.io.github.onecx.theme.bff.clients.model.ImageInfo;
 import gen.io.github.onecx.theme.bff.rs.internal.ImagesApiService;
+import gen.io.github.onecx.theme.bff.rs.internal.model.ImageInfoDTO;
 import gen.io.github.onecx.theme.bff.rs.internal.model.ProblemDetailResponseDTO;
 import io.github.onecx.themes.bff.rs.mappers.ExceptionMapper;
 import io.github.onecx.themes.bff.rs.mappers.ImageMapper;
@@ -47,10 +47,9 @@ public class ImageRestController implements ImagesApiService {
 
     @Override
     public Response updateImage(String imageId, InputStream imageInputStream) {
-
         ImageApi.UpdateImageMultipartForm multipartForm = new ImageApi.UpdateImageMultipartForm();
-        // TODO map InputSTream to multiPartForm
-        try(Response response = imageApi.updateImage(multipartForm, imageId)){
+        multipartForm.image = imageInputStream;
+        try (Response response = imageApi.updateImage(multipartForm, imageId)) {
             ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
             return Response.status(response.getStatus()).entity(imageInfoDTO).build();
         }
@@ -59,8 +58,8 @@ public class ImageRestController implements ImagesApiService {
     @Override
     public Response uploadImage(InputStream imageInputStream) {
         ImageApi.UploadImageMultipartForm multipartForm = new ImageApi.UploadImageMultipartForm();
-        // TODO map InputSTream to multiPartForm
-        try(Response response = imageApi.uploadImage(multipartForm)){
+        multipartForm.image = imageInputStream;
+        try (Response response = imageApi.uploadImage(multipartForm)) {
             ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
             return Response.status(response.getStatus()).entity(imageInfoDTO).build();
         }
