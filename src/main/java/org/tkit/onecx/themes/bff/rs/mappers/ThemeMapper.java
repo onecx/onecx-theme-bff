@@ -1,11 +1,11 @@
-package io.github.onecx.themes.bff.rs.mappers;
+package org.tkit.onecx.themes.bff.rs.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
-import gen.io.github.onecx.theme.bff.clients.model.*;
-import gen.io.github.onecx.theme.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.theme.bff.clients.model.*;
+import gen.org.tkit.onecx.theme.bff.rs.internal.model.*;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface ThemeMapper {
