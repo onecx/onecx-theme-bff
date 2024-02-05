@@ -1,4 +1,4 @@
-package io.github.onecx.themes.bff.rs.controllers;
+package org.tkit.onecx.themes.bff.rs.controllers;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -10,17 +10,17 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.tkit.onecx.themes.bff.rs.mappers.ExceptionMapper;
+import org.tkit.onecx.themes.bff.rs.mappers.ProblemDetailMapper;
+import org.tkit.onecx.themes.bff.rs.mappers.ThemeMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.io.github.onecx.theme.bff.clients.api.ThemesExportImportApi;
-import gen.io.github.onecx.theme.bff.clients.api.ThemesInternalApi;
-import gen.io.github.onecx.theme.bff.clients.api.WorkspaceExternalApi;
-import gen.io.github.onecx.theme.bff.clients.model.*;
-import gen.io.github.onecx.theme.bff.rs.internal.ThemesApiService;
-import gen.io.github.onecx.theme.bff.rs.internal.model.*;
-import io.github.onecx.themes.bff.rs.mappers.ExceptionMapper;
-import io.github.onecx.themes.bff.rs.mappers.ProblemDetailMapper;
-import io.github.onecx.themes.bff.rs.mappers.ThemeMapper;
+import gen.org.tkit.onecx.theme.bff.clients.api.ThemesExportImportApi;
+import gen.org.tkit.onecx.theme.bff.clients.api.ThemesInternalApi;
+import gen.org.tkit.onecx.theme.bff.clients.api.WorkspaceExternalApi;
+import gen.org.tkit.onecx.theme.bff.clients.model.*;
+import gen.org.tkit.onecx.theme.bff.rs.internal.ThemesApiService;
+import gen.org.tkit.onecx.theme.bff.rs.internal.model.*;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
