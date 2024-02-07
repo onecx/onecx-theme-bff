@@ -20,15 +20,13 @@ import org.mockserver.model.MediaType;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.io.github.onecx.theme.bff.rs.internal.model.ImageInfoDTO;
-import io.github.onecx.themes.bff.rs.controllers.ImageRestController;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
-import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @LogService
-@TestHTTPEndpoint(ImageRestController.class)
-public class ImageRestControllerTest {
+//@TestHTTPEndpoint(ImageRestController.class)
+class ImageRestControllerTest {
 
     @InjectMockServerClient
     MockServerClient mockServerClient;
@@ -44,9 +42,11 @@ public class ImageRestControllerTest {
 
         File file = new File(ImageRestControllerTest.class.getResource("/META-INF/resources/Testimage.png").getFile());
         String inputId = "11-111";
+        var refId = "themeName";
+        var refType = "LOGO";
 
         mockServerClient.when(request()
-                .withPath("/internal/images/" + inputId)
+                .withPath("/internal/images/" + refId + "/" + refType)
                 .withMethod(HttpMethod.GET))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
@@ -54,9 +54,11 @@ public class ImageRestControllerTest {
                         .withBody(String.valueOf(file)));
 
         given()
-                .when()
                 .contentType(APPLICATION_JSON)
-                .get(inputId)
+                .pathParam("refId", refId)
+                .pathParam("refType", refType)
+                .when()
+                .get("/internal/images/{refId}/{refType}")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
@@ -66,9 +68,11 @@ public class ImageRestControllerTest {
 
         File file = new File(ImageRestControllerTest.class.getResource("/META-INF/resources/Testimage.png").getFile());
         String inputId = "11-111";
+        var refId = "themeName";
+        var refType = "LOGO";
 
         mockServerClient.when(request()
-                .withPath("/internal/images/" + inputId)
+                .withPath("/internal/images/" + refId + "/" + refType)
                 .withMethod(HttpMethod.GET))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
@@ -76,7 +80,10 @@ public class ImageRestControllerTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .get(inputId)
+                .pathParam("refId", refId)
+                .pathParam("refType", refType)
+                .when()
+                .get("/internal/images/{refId}/{refType}")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
     }
@@ -84,11 +91,13 @@ public class ImageRestControllerTest {
     @Test
     void uploadImage() {
         File file = new File(ImageRestControllerTest.class.getResource("/META-INF/resources/Testimage.png").getFile());
+        var refId = "themeName";
+        var refType = "LOGO";
 
         ImageInfoDTO imageInfoDTO = new ImageInfoDTO();
         imageInfoDTO.setId("11-111");
 
-        mockServerClient.when(request().withPath("/internal/images").withMethod(HttpMethod.POST))
+        mockServerClient.when(request().withPath("/internal/images/" + refId + "/" + refType).withMethod(HttpMethod.POST))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -97,8 +106,10 @@ public class ImageRestControllerTest {
         var res = given()
                 .multiPart("image", file)
                 .contentType("multipart/form-data")
+                .pathParam("refId", refId)
+                .pathParam("refType", refType)
                 .when()
-                .post()
+                .post("/internal/images/{refId}/{refType}")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -113,16 +124,20 @@ public class ImageRestControllerTest {
     void uploadImage_shouldReturnNotFound() {
 
         File file = new File(ImageRestControllerTest.class.getResource("/META-INF/resources/Testimage.png").getFile());
+        var refId = "themeName";
+        var refType = "LOGO";
 
-        mockServerClient.when(request().withPath("/internal/images/").withMethod(HttpMethod.POST))
+        mockServerClient.when(request().withPath("/internal/images/" + refId + "/" + refType).withMethod(HttpMethod.POST))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var res = given()
                 .multiPart("image", file)
                 .contentType("multipart/form-data")
+                .pathParam("refId", refId)
+                .pathParam("refType", refType)
                 .when()
-                .post()
+                .post("/internal/images/{refId}/{refType}")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(res);
@@ -132,11 +147,13 @@ public class ImageRestControllerTest {
     void updateImage() {
 
         File file = new File(ImageRestControllerTest.class.getResource("/META-INF/resources/Testimage.png").getFile());
+        var refId = "themeName";
+        var refType = "LOGO";
 
         ImageInfoDTO imageInfoDTO = new ImageInfoDTO();
         imageInfoDTO.setId("11-111");
 
-        mockServerClient.when(request().withPath("/internal/images/" + imageInfoDTO.getId()).withMethod(HttpMethod.PUT))
+        mockServerClient.when(request().withPath("/internal/images/" + refId + "/" + refType).withMethod(HttpMethod.PUT))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -145,8 +162,10 @@ public class ImageRestControllerTest {
         var res = given()
                 .multiPart("image", file)
                 .contentType("multipart/form-data")
+                .pathParam("refId", refId)
+                .pathParam("refType", refType)
                 .when()
-                .put(imageInfoDTO.getId())
+                .put("/internal/images/{refId}/{refType}")
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -161,19 +180,23 @@ public class ImageRestControllerTest {
         String inputId = "11-111";
 
         File file = new File(ImageRestControllerTest.class.getResource("/META-INF/resources/Testimage.png").getFile());
+        var refId = "themeName";
+        var refType = "LOGO";
 
         ImageInfoDTO imageInfoDTO = new ImageInfoDTO();
         imageInfoDTO.setId("11-111");
 
-        mockServerClient.when(request().withPath("/internal/images/" + inputId).withMethod(HttpMethod.PUT))
+        mockServerClient.when(request().withPath("/internal/images/" + refId + "/" + refType).withMethod(HttpMethod.PUT))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var res = given()
                 .multiPart("image", file)
                 .contentType("multipart/form-data")
+                .pathParam("refId", refId)
+                .pathParam("refType", refType)
                 .when()
-                .put(inputId)
+                .put("/internal/images/{refId}/{refType}")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(res);

@@ -8,7 +8,7 @@ servers:
   - url: http://onecx-theme-bff:8080/
 tags:
   - name: theme
-  - name: images
+  - name: imagesInternal
 paths:
   /themes:
     get:
@@ -227,17 +227,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /images:
+  /internal/images/{refId}/{refType}:
     post:
       tags:
-        - images
+        - imagesInternal
       description: Upload Images
+      parameters:
+        - name: refId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: refType
+          in: path
+          required: true
+          schema:
+            type: string
       operationId: uploadImage
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required:
+                - image
               properties:
                 image:
                   format: binary
@@ -253,14 +267,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
-  /images/{imageId}:
+        "400":
+          description: Bad Request
     get:
       tags:
-        - images
+        - imagesInternal
       description: Get Image by id
       operationId: getImage
       parameters:
-        - name: imageId
+        - name: refId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: refType
           in: path
           required: true
           schema:
@@ -269,26 +289,44 @@ paths:
         "200":
           description: OK
           content:
-            application/octet-stream:
+            image/png:
               schema:
                 type: string
                 format: binary
+            image/jpg:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
     put:
       tags:
-        - images
+        - imagesInternal
       description: update Images
       operationId: updateImage
       parameters:
-        - name: imageId
+        - name: refId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: refType
           in: path
           required: true
           schema:
             type: string
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required:
+                - image
               properties:
                 image:
                   format: binary
@@ -304,6 +342,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
 components:
   schemas:
     Theme:
