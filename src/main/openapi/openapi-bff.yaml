@@ -11,6 +11,10 @@ tags:
 paths:
   /themes:
     get:
+      x-onecx:
+        permissions:
+          themes:
+            - read
       tags:
         - themes
       description: Find all themes
@@ -34,6 +38,10 @@ paths:
         "404":
           description: Not found
     post:
+      x-onecx:
+        permissions:
+          themes:
+            - write
       tags:
         - themes
       description: Create theme
@@ -62,6 +70,10 @@ paths:
           description: Not Found
   /themes/{id}:
     get:
+      x-onecx:
+        permissions:
+          themes:
+            - read
       tags:
         - themes
       description: Find theme by id
@@ -84,6 +96,10 @@ paths:
         "404":
           description: Not Found
     put:
+      x-onecx:
+        permissions:
+          themes:
+            - write
       tags:
         - themes
       description: Update theme
@@ -113,6 +129,10 @@ paths:
         "404":
           description: Not Found
     delete:
+      x-onecx:
+        permissions:
+          themes:
+            - delete
       tags:
         - themes
       description: Delete theme
@@ -130,6 +150,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /themes/name/{name}:
     get:
+      x-onecx:
+        permissions:
+          themes:
+            - read
       tags:
         - themes
       description: Find theme by name including workspace
@@ -153,6 +177,10 @@ paths:
           description: Not Found
   /themes/search:
     post:
+      x-onecx:
+        permissions:
+          themes:
+            - read
       tags:
         - themes
       description: Search themes by criteria
@@ -182,6 +210,10 @@ paths:
           description: Not Found
   /themes/export:
     post:
+      x-onecx:
+        permissions:
+          themes:
+            - read
       tags:
         - themes
       description: Export list of themes
@@ -203,6 +235,10 @@ paths:
           description: No themes founds
   /themes/import:
     post:
+      x-onecx:
+        permissions:
+          themes:
+            - write
       tags:
         - themes
       description: Import themes
@@ -231,7 +267,7 @@ components:
     Theme:
       type: object
       properties:
-        version:
+        modificationCount:
           format: int32
           type: integer
         creationDate:
@@ -266,7 +302,7 @@ components:
     ThemeUpdateCreate:
       type: object
       properties:
-        version:
+        modificationCount:
           format: int32
           type: integer
         creationDate:
