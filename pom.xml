@@ -107,6 +107,7 @@
                             <inputSpec>src/main/openapi/openapi-bff.yaml</inputSpec>
                             <apiPackage>gen.org.tkit.onecx.theme.bff.rs.internal</apiPackage>
                             <modelPackage>gen.org.tkit.onecx.theme.bff.rs.internal.model</modelPackage>
+                            <typeMappings>File=byte[]</typeMappings>
                         </configuration>
                     </execution>
                 </executions>
@@ -128,7 +129,7 @@
                         <useTags>true</useTags>
                         <interfaceOnly>true</interfaceOnly>
                         <serializableModel>true</serializableModel>
-                        <singleContentTypes>true</singleContentTypes>
+                        <singleContentTypes>false</singleContentTypes>
                         <dateLibrary>java8</dateLibrary>
                         <useMicroProfileOpenAPIAnnotations>true</useMicroProfileOpenAPIAnnotations>
                         <useJakartaEe>true</useJakartaEe>
@@ -194,7 +195,7 @@
                         </goals>
                         <configuration>
                             <url>
-                                https://raw.githubusercontent.com/jsteenke/onecx-theme-svc/main/src/main/openapi/onecx-image-internal-openapi.yaml
+                                https://raw.githubusercontent.com/onecx/onecx-theme-svc/main/src/main/openapi/onecx-image-internal-openapi.yaml
                             </url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-image-internal.yaml</outputFileName>

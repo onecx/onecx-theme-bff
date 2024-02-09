@@ -11,23 +11,27 @@ import gen.org.tkit.onecx.theme.bff.rs.internal.model.*;
 public interface ThemeMapper {
 
     @Mapping(source = "resource", target = ".")
+    //    @Mapping(target = "modificationCount", source = "resource.version")
     UpdateTheme mapUpdate(UpdateThemeRequestDTO dto);
 
     @Mapping(source = "resource", target = ".")
     CreateTheme mapCreate(CreateThemeRequestDTO dto);
 
     @Mapping(source = ".", target = "resource")
+    //    @Mapping(target = "resource.version", source = "modificationCount")
     UpdateThemeResponseDTO map(Theme theme);
 
     @Mapping(source = "theme", target = "resource")
     @Mapping(source = "workspacePageResult.stream", target = "workspaces")
     @Mapping(target = "removeWorkspacesItem", ignore = true)
+    //    @Mapping(target = "resource.version", source = "theme.modificationCount")
     GetThemeResponseDTO getThemeResponseDTOMapper(Theme theme, WorkspacePageResult workspacePageResult);
 
     @Mapping(source = ".", target = "resource")
     CreateThemeResponseDTO createThemeResponseDTOMapper(ThemeDTO dto);
 
     @Mapping(target = "removeStreamItem", ignore = true)
+    //    @Mapping(target = "stream.version", ignore = true)
     GetThemesResponseDTO getThemesResponseMapper(ThemePageResult pageResult);
 
     @Mapping(target = "removeStreamItem", ignore = true)
