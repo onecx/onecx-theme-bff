@@ -19,8 +19,12 @@ import org.mockserver.model.MediaType;
 import org.tkit.onecx.themes.bff.rs.controllers.ThemeRestController;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.org.tkit.onecx.theme.bff.clients.model.*;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.theme.client.model.*;
+import gen.org.tkit.onecx.theme_exim.client.model.*;
+import gen.org.tkit.onecx.workspace.client.model.WorkspaceAbstract;
+import gen.org.tkit.onecx.workspace.client.model.WorkspacePageResult;
+import gen.org.tkit.onecx.workspace.client.model.WorkspaceSearchCriteria;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -32,9 +36,17 @@ class ThemeRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
+    static final String mockId = "MOCK";
+    static final String workspaceMockId = "WORKSPACEMOCK";
+
     @BeforeEach
-    void resetMockServer() {
-        mockServerClient.reset();
+    void resetExpectation() {
+        try {
+            mockServerClient.clear(mockId);
+            mockServerClient.clear(workspaceMockId);
+        } catch (Exception ex) {
+            //  mockId not existing
+        }
     }
 
     @Test
@@ -55,7 +67,7 @@ class ThemeRestControllerTest extends AbstractTest {
         criteria.setThemeName(data.getName());
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -63,13 +75,15 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
-                .withPriority(100)
+                .withId(workspaceMockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaces)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", data.getId())
                 .get("/{id}")
@@ -102,7 +116,7 @@ class ThemeRestControllerTest extends AbstractTest {
         criteria.setThemeName(data.getName());
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/name/" + data.getName()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -110,13 +124,15 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
-                .withPriority(100)
+                .withId(workspaceMockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaces)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("name", data.getName())
                 .get("/name/{name}")
@@ -147,18 +163,20 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/name/" + data.getName()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(workspaceMockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("name", data.getName())
                 .get("/name/{name}")
@@ -183,19 +201,21 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(workspaceMockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withBody(JsonBody.json(workspaces)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", data.getId())
                 .get("/{id}")
@@ -220,18 +240,20 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(workspaceMockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", data.getId())
                 .get("/{id}")
@@ -253,12 +275,14 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + id).withMethod(HttpMethod.DELETE))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
         given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .delete("/{id}")
@@ -276,7 +300,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(data)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(theme)));
@@ -288,6 +312,8 @@ class ThemeRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(input)
                 .post()
@@ -295,6 +321,17 @@ class ThemeRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
                 .extract().as(CreateThemeResponseDTO.class);
+
+        // standard USER get FORBIDDEN with only READ permission
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(USER))
+                .header(APM_HEADER_PARAM, USER)
+                .contentType(APPLICATION_JSON)
+                .body(input)
+                .post()
+                .then()
+                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
 
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
@@ -305,11 +342,10 @@ class ThemeRestControllerTest extends AbstractTest {
         CreateTheme data = new CreateTheme();
         ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
         problemDetailResponse.setErrorCode("CONSTRAINT_VIOLATIONS");
-        mockServerClient.reset();
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(data)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -320,6 +356,8 @@ class ThemeRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(input)
                 .post()
@@ -351,13 +389,15 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .get()
                 .then()
@@ -397,13 +437,15 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(searchThemeRequestDTO)
                 .post("/search")
@@ -425,13 +467,15 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/search").withMethod(HttpMethod.POST))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .post("/search")
                 .then()
@@ -450,7 +494,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateTheme)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
@@ -459,7 +503,6 @@ class ThemeRestControllerTest extends AbstractTest {
         theme.setId("testId");
 
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.GET))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withBody(JsonBody.json(theme))
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -471,6 +514,8 @@ class ThemeRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
@@ -493,7 +538,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateTheme)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withBody(JsonBody.json(problemDetailResponse))
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -508,6 +553,8 @@ class ThemeRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
@@ -526,11 +573,13 @@ class ThemeRestControllerTest extends AbstractTest {
         String notFoundId = "notFound";
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + notFoundId).withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", notFoundId)
                 .get("/{id}")
@@ -558,7 +607,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/themes/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(exRequest)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(exResponse)));
@@ -568,6 +617,8 @@ class ThemeRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(exRequestDTO)
                 .post("/export")
@@ -587,13 +638,15 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/themes/import").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(exResponse)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(importThemeResponse)));
 
         var importOutput = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(output)
                 .post("/import")
@@ -616,7 +669,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(createTheme)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -627,6 +680,8 @@ class ThemeRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(createThemeRequestDTO)
                 .post()

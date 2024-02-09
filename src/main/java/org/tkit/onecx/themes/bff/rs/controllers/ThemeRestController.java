@@ -15,12 +15,17 @@ import org.tkit.onecx.themes.bff.rs.mappers.ProblemDetailMapper;
 import org.tkit.onecx.themes.bff.rs.mappers.ThemeMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.org.tkit.onecx.theme.bff.clients.api.ThemesExportImportApi;
-import gen.org.tkit.onecx.theme.bff.clients.api.ThemesInternalApi;
-import gen.org.tkit.onecx.theme.bff.clients.api.WorkspaceExternalApi;
-import gen.org.tkit.onecx.theme.bff.clients.model.*;
 import gen.org.tkit.onecx.theme.bff.rs.internal.ThemesApiService;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.theme.client.api.ThemesInternalApi;
+import gen.org.tkit.onecx.theme.client.model.ProblemDetailResponse;
+import gen.org.tkit.onecx.theme.client.model.Theme;
+import gen.org.tkit.onecx.theme.client.model.ThemePageResult;
+import gen.org.tkit.onecx.theme_exim.client.api.ThemesExportImportApi;
+import gen.org.tkit.onecx.theme_exim.client.model.ImportThemeResponse;
+import gen.org.tkit.onecx.theme_exim.client.model.ThemeSnapshot;
+import gen.org.tkit.onecx.workspace.client.api.WorkspaceExternalApi;
+import gen.org.tkit.onecx.workspace.client.model.WorkspacePageResult;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
