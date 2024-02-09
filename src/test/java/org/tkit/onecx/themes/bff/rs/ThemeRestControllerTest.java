@@ -21,7 +21,7 @@ import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.model.*;
-import gen.org.tkit.onecx.theme_exim.client.model.*;
+import gen.org.tkit.onecx.theme.exim.client.model.*;
 import gen.org.tkit.onecx.workspace.client.model.WorkspaceAbstract;
 import gen.org.tkit.onecx.workspace.client.model.WorkspacePageResult;
 import gen.org.tkit.onecx.workspace.client.model.WorkspaceSearchCriteria;
