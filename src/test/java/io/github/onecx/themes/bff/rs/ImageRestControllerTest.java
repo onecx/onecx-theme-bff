@@ -11,9 +11,6 @@ import java.io.*;
 import java.util.Objects;
 import java.util.Random;
 
-import gen.org.tkit.onecx.theme.bff.clients.model.ProblemDetailResponse;
-import gen.org.tkit.onecx.theme.bff.clients.model.RefType;
-import gen.org.tkit.onecx.theme.bff.rs.internal.model.ProblemDetailResponseDTO;
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
@@ -28,7 +25,10 @@ import org.mockserver.model.MediaType;
 import org.tkit.onecx.themes.bff.rs.controllers.ImageRestController;
 import org.tkit.quarkus.log.cdi.LogService;
 
+import gen.org.tkit.onecx.theme.bff.clients.model.ProblemDetailResponse;
+import gen.org.tkit.onecx.theme.bff.clients.model.RefType;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.ImageInfoDTO;
+import gen.org.tkit.onecx.theme.bff.rs.internal.model.ProblemDetailResponseDTO;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.RefTypeDTO;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
@@ -59,9 +59,9 @@ class ImageRestControllerTest {
 
         var refId = "themeName";
         var refType = RefTypeDTO.FAVICON;
-        byte[] bytesRes = new byte[] { (byte)0xe0, 0x4f, (byte)0xd0,
-                0x20, (byte)0xea, 0x3a, 0x69, 0x10, (byte)0xa2, (byte)0xd8, 0x08, 0x00, 0x2b,
-                0x30, 0x30, (byte)0x9d };
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
 
         mockServerClient.when(request()
                 .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
@@ -69,10 +69,8 @@ class ImageRestControllerTest {
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withHeaders(
-                                new Header("Content-Type", MEDIA_TYPE_IMAGE_PNG)
-                        )
-                        .withBody(bytesRes)
-                );
+                                new Header("Content-Type", MEDIA_TYPE_IMAGE_PNG))
+                        .withBody(bytesRes));
 
         var res = given()
                 .contentType(APPLICATION_JSON)
@@ -92,20 +90,18 @@ class ImageRestControllerTest {
 
         var refId = "themeName";
         var refType = RefTypeDTO.FAVICON;
-        byte[] bytesRes = new byte[] { (byte)0xe0, 0x4f, (byte)0xd0,
-                0x20, (byte)0xea, 0x3a, 0x69, 0x10, (byte)0xa2, (byte)0xd8, 0x08, 0x00, 0x2b,
-                0x30, 0x30, (byte)0x9d };
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
 
         mockServerClient.when(request()
-                        .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
-                        .withMethod(HttpMethod.GET))
+                .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
+                .withMethod(HttpMethod.GET))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withHeaders(
-                                new Header("Content-Type", MEDIA_TYPE_IMAGE_JPG)
-                        )
-                        .withBody(bytesRes)
-                );
+                                new Header("Content-Type", MEDIA_TYPE_IMAGE_JPG))
+                        .withBody(bytesRes));
 
         var res = given()
                 .contentType(APPLICATION_JSON)
@@ -127,7 +123,6 @@ class ImageRestControllerTest {
         ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
         problemDetailResponse.setErrorCode(String.valueOf(BAD_REQUEST));
         problemDetailResponse.setDetail("uploadImage.contentLength: must be less than or equal to 20000");
-
 
         mockServerClient.when(request()
                 .withPath("/internal/images/" + refId + "/" + RefType.LOGO)
@@ -154,15 +149,13 @@ class ImageRestControllerTest {
         byte[] bytesRes = null;
 
         mockServerClient.when(request()
-                        .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
-                        .withMethod(HttpMethod.GET))
+                .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
+                .withMethod(HttpMethod.GET))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withHeaders(
-                                new Header("Content-Type", MEDIA_TYPE_IMAGE_JPG)
-                        )
-                        .withBody(bytesRes)
-                );
+                                new Header("Content-Type", MEDIA_TYPE_IMAGE_JPG))
+                        .withBody(bytesRes));
 
         given()
                 .contentType(APPLICATION_JSON)
@@ -285,7 +278,6 @@ class ImageRestControllerTest {
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(res);
     }
-
 
     @Test
     void testMaxUploadSize() {

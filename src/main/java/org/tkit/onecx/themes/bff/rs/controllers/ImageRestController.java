@@ -42,13 +42,13 @@ public class ImageRestController implements ImagesInternalApiService {
             var contentType = response.getHeaderString("Content-Type");
             var contentLength = response.getHeaderString("Content-Length");
             var body = response.readEntity(byte[].class);
-            if (contentType != null && contentLength != null && body != null && body.length!=0) {
+            if (contentType != null && contentLength != null && body != null && body.length != 0) {
                 return Response.status(response.getStatus())
                         .header("Content-Type", contentType)
                         .header("Content-Length", contentLength)
                         .entity(body)
                         .build();
-            }else {
+            } else {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
         }
