@@ -57,7 +57,9 @@ public class ImageRestController implements ImagesInternalApiService {
     @Override
     public Response updateImage(String refId, RefTypeDTO refType, byte[] body, Integer contentLength) {
 
-        try (Response response = imageApi.updateImage(refId, imageMapper.map(refType), body, contentLength)) {
+        try (Response response = imageApi.updateImage(refId, imageMapper.map(refType), body,
+                contentLength)) {
+
             ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
             return Response.status(response.getStatus()).entity(imageInfoDTO).build();
         }
@@ -66,7 +68,8 @@ public class ImageRestController implements ImagesInternalApiService {
     @Override
     public Response uploadImage(Integer contentLength, String refId, RefTypeDTO refType, byte[] body) {
 
-        try (Response response = imageApi.uploadImage(contentLength, refId, imageMapper.map(refType), body)) {
+        try (Response response = imageApi.uploadImage(contentLength, refId, imageMapper.map(refType),
+                body)) {
             ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
             return Response.status(response.getStatus()).entity(imageInfoDTO).build();
         }
