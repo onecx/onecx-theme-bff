@@ -7,7 +7,7 @@
           "alice"
         ]
       },
-      "path": "/v1/permissions/user/application/onecx-theme-bff"
+      "path": "/v1/permissions/user/applications/onecx-theme-bff"
     },
     "httpResponse": {
       "body": {
@@ -38,7 +38,7 @@
           "bob"
         ]
       },
-      "path": "/v1/permissions/user/application/onecx-theme-bff"
+      "path": "/v1/permissions/user/applications/onecx-theme-bff"
     },
     "httpResponse": {
       "body": {
