@@ -1,4 +1,4 @@
-package io.github.onecx.themes.bff.rs;
+package org.tkit.onecx.themes.bff.rs;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
