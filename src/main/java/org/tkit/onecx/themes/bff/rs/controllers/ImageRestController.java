@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -39,13 +40,13 @@ public class ImageRestController implements ImagesInternalApiService {
     @Override
     public Response getImage(String refId, RefTypeDTO refType) {
         try (Response response = imageApi.getImage(refId, imageMapper.map(refType))) {
-            var contentType = response.getHeaderString("Content-Type");
-            var contentLength = response.getHeaderString("Content-Length");
+            var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
+            var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
             var body = response.readEntity(byte[].class);
             if (contentType != null && contentLength != null && body != null && body.length != 0) {
                 return Response.status(response.getStatus())
-                        .header("Content-Type", contentType)
-                        .header("Content-Length", contentLength)
+                        .header(HttpHeaders.CONTENT_TYPE, contentType)
+                        .header(HttpHeaders.CONTENT_LENGTH, contentLength)
                         .entity(body)
                         .build();
             } else {

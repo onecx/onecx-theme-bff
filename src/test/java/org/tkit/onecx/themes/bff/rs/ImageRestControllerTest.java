@@ -78,7 +78,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withHeaders(
-                                new Header("Content-Type", MEDIA_TYPE_IMAGE_PNG))
+                                new Header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG))
                         .withBody(bytesRes));
 
         var res = given()
@@ -113,7 +113,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withHeaders(
-                                new Header("Content-Type", MEDIA_TYPE_IMAGE_JPG))
+                                new Header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_JPG))
                         .withBody(bytesRes));
 
         var res = given()
@@ -174,7 +174,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withHeaders(
-                                new Header("Content-Type", MEDIA_TYPE_IMAGE_JPG))
+                                new Header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_JPG))
                         .withBody(bytesRes));
 
         given()
@@ -210,7 +210,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .when()
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
-                .header("Content-Type", MEDIA_TYPE_IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
                 .when()
