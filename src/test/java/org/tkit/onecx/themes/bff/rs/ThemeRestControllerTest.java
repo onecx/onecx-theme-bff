@@ -494,7 +494,6 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateTheme)))
-                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
@@ -503,6 +502,7 @@ class ThemeRestControllerTest extends AbstractTest {
         theme.setId("testId");
 
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.GET))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withBody(JsonBody.json(theme))
                         .withContentType(MediaType.APPLICATION_JSON));

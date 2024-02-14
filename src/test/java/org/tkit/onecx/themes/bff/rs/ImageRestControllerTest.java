@@ -37,7 +37,7 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 @LogService
 @TestHTTPEndpoint(ImageRestController.class)
-class ImageRestControllerTest {
+class ImageRestControllerTest extends AbstractTest {
 
     private static final String MEDIA_TYPE_IMAGE_PNG = "image/png";
     private static final String MEDIA_TYPE_IMAGE_JPG = "image/jpg";
@@ -47,6 +47,19 @@ class ImageRestControllerTest {
 
     @InjectMockServerClient
     MockServerClient mockServerClient;
+
+    static final String mockId = "MOCK";
+    static final String workspaceMockId = "WORKSPACEMOCK";
+
+    @BeforeEach
+    void resetExpectation() {
+        try {
+            mockServerClient.clear(mockId);
+            mockServerClient.clear(workspaceMockId);
+        } catch (Exception ex) {
+            //  mockId not existing
+        }
+    }
 
     @BeforeEach
     void resetMockServer() {
@@ -73,6 +86,9 @@ class ImageRestControllerTest {
                         .withBody(bytesRes));
 
         var res = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
@@ -104,6 +120,9 @@ class ImageRestControllerTest {
                         .withBody(bytesRes));
 
         var res = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
@@ -133,6 +152,9 @@ class ImageRestControllerTest {
                         .withBody(JsonBody.json(problemDetailResponse)));
 
         given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
@@ -158,6 +180,9 @@ class ImageRestControllerTest {
                         .withBody(bytesRes));
 
         given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
@@ -183,6 +208,9 @@ class ImageRestControllerTest {
                         .withBody(JsonBody.json(imageInfoDTO)));
 
         var res = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .header("Content-Type", MEDIA_TYPE_IMAGE_PNG)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
@@ -210,6 +238,9 @@ class ImageRestControllerTest {
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var res = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
                 .when()
@@ -239,6 +270,9 @@ class ImageRestControllerTest {
                         .withBody(JsonBody.json(imageInfoDTO)));
 
         var res = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
                 .when()
@@ -268,6 +302,9 @@ class ImageRestControllerTest {
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var res = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
                 .when()
@@ -297,6 +334,9 @@ class ImageRestControllerTest {
                         .withBody(JsonBody.json(problemDetailResponse)));
 
         var exception = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
                 .when()
