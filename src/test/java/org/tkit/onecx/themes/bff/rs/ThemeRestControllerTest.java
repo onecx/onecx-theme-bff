@@ -28,11 +28,14 @@ import gen.org.tkit.onecx.workspace.client.model.WorkspaceSearchCriteria;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.keycloak.client.KeycloakTestClient;
 
 @QuarkusTest
 @LogService
 @TestHTTPEndpoint(ThemeRestController.class)
 class ThemeRestControllerTest extends AbstractTest {
+
+    KeycloakTestClient keycloakClient = new KeycloakTestClient();
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
@@ -494,7 +497,6 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateTheme)))
-                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
@@ -503,6 +505,7 @@ class ThemeRestControllerTest extends AbstractTest {
         theme.setId("testId");
 
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.GET))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withBody(JsonBody.json(theme))
                         .withContentType(MediaType.APPLICATION_JSON));

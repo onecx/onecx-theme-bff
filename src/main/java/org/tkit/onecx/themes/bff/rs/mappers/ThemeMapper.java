@@ -33,6 +33,7 @@ public interface ThemeMapper {
     CreateThemeResponseDTO createThemeResponseDTOMapper(ThemeDTO dto);
 
     @Mapping(target = "removeStreamItem", ignore = true)
+    //    @Mapping(target = "stream.version", ignore = true)
     GetThemesResponseDTO getThemesResponseMapper(ThemePageResult pageResult);
 
     @Mapping(target = "removeStreamItem", ignore = true)
