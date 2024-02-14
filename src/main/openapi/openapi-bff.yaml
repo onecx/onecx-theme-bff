@@ -265,6 +265,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /images/{refId}/{refType}:
     post:
+      x-onecx:
+        permissions:
+          themes:
+            - write
       tags:
         - imagesInternal
       description: Upload Images
@@ -306,6 +310,10 @@ paths:
         "400":
           description: Bad Request
     get:
+      x-onecx:
+        permissions:
+          themes:
+            - read
       tags:
         - imagesInternal
       description: Get Image by id
@@ -338,6 +346,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
     put:
+      x-onecx:
+        permissions:
+          themes:
+            - write
       tags:
         - imagesInternal
       description: update Images
