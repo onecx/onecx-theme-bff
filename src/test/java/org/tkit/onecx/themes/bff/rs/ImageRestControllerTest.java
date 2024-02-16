@@ -138,7 +138,7 @@ class ImageRestControllerTest extends AbstractTest {
         var refId = "themeName";
         ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
         problemDetailResponse.setErrorCode(String.valueOf(BAD_REQUEST));
-        problemDetailResponse.setDetail("uploadImage.contentLength: must be less than or equal to 20000");
+        problemDetailResponse.setDetail("uploadImage.contentLength: must be less than or equal to 110000");
 
         mockServerClient.when(request()
                 .withPath("/internal/images/" + refId + "/" + RefType.LOGO)
@@ -323,11 +323,11 @@ class ImageRestControllerTest extends AbstractTest {
 
         var refId = "themeMaxUpload";
 
-        byte[] body = new byte[20001];
+        byte[] body = new byte[110001];
         new Random().nextBytes(body);
         ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
         problemDetailResponse.setErrorCode("CONSTRAINT_VIOLATIONS");
-        problemDetailResponse.setDetail("uploadImage.contentLength: must be less than or equal to 20000");
+        problemDetailResponse.setDetail("uploadImage.contentLength: must be less than or equal to 110000");
 
         mockServerClient
                 .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
@@ -352,7 +352,7 @@ class ImageRestControllerTest extends AbstractTest {
 
         assertThat(exception.getErrorCode()).isEqualTo("CONSTRAINT_VIOLATIONS");
         assertThat(exception.getDetail()).isEqualTo(
-                "uploadImage.contentLength: must be less than or equal to 20000");
+                "uploadImage.contentLength: must be less than or equal to 110000");
 
     }
 }
