@@ -52,6 +52,7 @@ public interface ThemeMapper {
     ImportThemeResponseDTO map(ImportThemeResponse response);
 
     @Mapping(target = "themeName", source = "themeName")
+    @Mapping(target = "productName", ignore = true)
     @Mapping(target = "pageNumber", ignore = true)
     @Mapping(target = "pageSize", ignore = true)
     WorkspaceSearchCriteria map(String themeName);
