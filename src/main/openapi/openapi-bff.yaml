@@ -387,6 +387,140 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /searchConfig/:
+    post:
+      tags:
+        - SearchConfig
+      summary: Creates a new search config
+      description: Creates a new search config and returns the updated list of search configs by page
+      operationId: createSearchConfig
+      requestBody:
+        description: Creates a new search config
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSearchConfigRequest'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSearchConfigResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /searchConfig/{page}:
+    get:
+      tags:
+        - SearchConfig
+      summary: Gets the search configs for the specified page.
+      description: The search config for the page is returned.
+      operationId: getSearchConfigs
+      parameters:
+        - name: page
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSearchConfigsResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /searchConfig/{configId}:
+    put:
+      tags:
+        - SearchConfig
+      summary: Updates the search config specified by the configId
+      description: Updates the search config and returns the updated list of search configs  by page
+      operationId: updateSearchConfig
+      parameters:
+        - name: configId
+          in: path
+          description: ConfigId for the search config to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated values for the specified search config
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSearchConfigRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateSearchConfigResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+    delete:
+      tags:
+        - SearchConfig
+      summary: Deletes the search config
+      description: Deletes the search config
+      operationId: deleteSearchConfig
+      parameters:
+        - name: configId
+          in: path
+          description: ConfigId for the searchConfig to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+
 components:
   schemas:
     RefType:
@@ -647,6 +781,105 @@ components:
       properties:
         id:
           type: string
+    SearchConfig:
+      type: object
+      required:
+        - id
+        - page
+        - name
+        - modificationCount
+        - fieldListVersion
+        - isReadOnly
+        - isAdvanced
+        - columns
+        - values
+      properties:
+        id:
+          type: string
+        page:
+          type: string
+        name:
+          type: string
+        modificationCount:
+          type: integer
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        isReadOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        isAdvanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
+    GetSearchConfigsResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchConfigList'
+    CreateSearchConfigRequest:
+      type: object
+      required:
+        - 'page'
+        - 'name'
+        - 'fieldListVersion'
+        - 'isReadonly'
+        - 'isAdvanced'
+        - 'columns'
+        - 'values'
+      properties:
+        page:
+          type: string
+        name:
+          type: string
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        isReadOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        isAdvanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
+    CreateSearchConfigResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchConfigList'
+    UpdateSearchConfigRequest:
+      type: object
+      required:
+        - searchConfig
+      properties:
+        searchConfig:
+          $ref: '#/components/schemas/SearchConfig'
+    UpdateSearchConfigResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchConfigList'
+    SearchConfigList:
+      type: object
+      required:
+        - configs
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        configs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchConfig'
   parameters:
     pageNumber:
       in: query
