@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.tkit.onecx.themes.bff.rs.mappers.ExceptionMapper;
-import org.tkit.onecx.themes.bff.rs.mappers.SearchConfigOptions;
+import org.tkit.onecx.themes.bff.rs.mappers.OnecxThemeBFFConfig;
 
 import gen.org.tkit.onecx.searchconfig.v1.client.api.SearchConfigApi;
 import gen.org.tkit.onecx.theme.bff.rs.internal.SearchConfigApiService;
@@ -20,7 +20,7 @@ public class SearchConfigRestController implements SearchConfigApiService {
     SearchConfigApi searchConfigApi;
 
     @Inject()
-    SearchConfigOptions configOptions;
+    OnecxThemeBFFConfig configOptions;
 
     @Inject
     ExceptionMapper exceptionMapper;
@@ -30,10 +30,10 @@ public class SearchConfigRestController implements SearchConfigApiService {
 
     @Override
     public Response createSearchConfig(CreateSearchConfigRequestDTO createSearchConfigRequestDTO) {
-        if (!configOptions.searchConfigEnabled()) {
+        if (!configOptions.searchconfig().searchConfigEnabled()) {
             return Response.status(BAD_REQUEST)
-                    .entity(
-                            exceptionMapper.exception(CONFIG_DISABLED_ERROR_CODE, CONFIG_DISABLED_ERROR_DETAIL))
+                    .entity(exceptionMapper.searchConfigDisabledException(CONFIG_DISABLED_ERROR_CODE,
+                            CONFIG_DISABLED_ERROR_DETAIL))
                     .build();
         }
         return null;
@@ -41,10 +41,10 @@ public class SearchConfigRestController implements SearchConfigApiService {
 
     @Override
     public Response deleteSearchConfig(String configId) {
-        if (!configOptions.searchConfigEnabled()) {
+        if (!configOptions.searchconfig().searchConfigEnabled()) {
             return Response.status(BAD_REQUEST)
-                    .entity(
-                            exceptionMapper.exception(CONFIG_DISABLED_ERROR_CODE, CONFIG_DISABLED_ERROR_DETAIL))
+                    .entity(exceptionMapper.searchConfigDisabledException(CONFIG_DISABLED_ERROR_CODE,
+                            CONFIG_DISABLED_ERROR_DETAIL))
                     .build();
         }
         return null;
@@ -52,10 +52,11 @@ public class SearchConfigRestController implements SearchConfigApiService {
 
     @Override
     public Response getSearchConfigs(String page) {
-        if (!configOptions.searchConfigEnabled()) {
+        if (!configOptions.searchconfig().searchConfigEnabled()) {
+            System.out.println(configOptions.productName());
             return Response.status(BAD_REQUEST)
-                    .entity(
-                            exceptionMapper.exception(CONFIG_DISABLED_ERROR_CODE, CONFIG_DISABLED_ERROR_DETAIL))
+                    .entity(exceptionMapper.searchConfigDisabledException(CONFIG_DISABLED_ERROR_CODE,
+                            CONFIG_DISABLED_ERROR_DETAIL))
                     .build();
         }
         return null;
@@ -63,10 +64,10 @@ public class SearchConfigRestController implements SearchConfigApiService {
 
     @Override
     public Response updateSearchConfig(String configId, UpdateSearchConfigRequestDTO updateSearchConfigRequestDTO) {
-        if (!configOptions.searchConfigEnabled()) {
+        if (!configOptions.searchconfig().searchConfigEnabled()) {
             return Response.status(BAD_REQUEST)
-                    .entity(
-                            exceptionMapper.exception(CONFIG_DISABLED_ERROR_CODE, CONFIG_DISABLED_ERROR_DETAIL))
+                    .entity(exceptionMapper.searchConfigDisabledException(CONFIG_DISABLED_ERROR_CODE,
+                            CONFIG_DISABLED_ERROR_DETAIL))
                     .build();
         }
         // TODO Refetch list of all searchConfigs for current page and return list instead of only updated config

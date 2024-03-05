@@ -50,6 +50,12 @@ public interface ExceptionMapper {
     List<ProblemDetailInvalidParamDTO> createErrorValidationResponse(
             Set<ConstraintViolation<?>> constraintViolation);
 
+    @Mapping(target = "removeParamsItem", ignore = true)
+    @Mapping(target = "params", ignore = true)
+    @Mapping(target = "invalidParams", ignore = true)
+    @Mapping(target = "removeInvalidParamsItem", ignore = true)
+    ProblemDetailResponseDTO searchConfigDisabledException(String errorCode, String detail);
+
     @Mapping(target = "name", source = "propertyPath")
     @Mapping(target = "message", source = "message")
     ProblemDetailInvalidParamDTO createError(ConstraintViolation<?> constraintViolation);
