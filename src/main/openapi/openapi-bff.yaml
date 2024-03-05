@@ -789,7 +789,7 @@ components:
         - name
         - modificationCount
         - fieldListVersion
-        - isReadOnly
+        - isReadonly
         - isAdvanced
         - columns
         - values
@@ -805,7 +805,7 @@ components:
         fieldListVersion:
           type: integer
           description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
-        isReadOnly:
+        isReadonly:
           type: boolean
           description: Defines whether this config can be changed in the UI
         isAdvanced:
@@ -840,7 +840,7 @@ components:
         fieldListVersion:
           type: integer
           description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
-        isReadOnly:
+        isReadonly:
           type: boolean
           description: Defines whether this config can be changed in the UI
         isAdvanced:
