@@ -57,13 +57,10 @@ public interface SearchConfigMapper {
 
     @Mapping(target = "values", source = "searchConfig.values")
     @Mapping(target = "readOnly", source = "searchConfig.isReadonly")
-    @Mapping(target = "page", source = "searchConfig.page")
     @Mapping(target = "name", source = "searchConfig.name")
     @Mapping(target = "modificationCount", source = "searchConfig.modificationCount")
     @Mapping(target = "fieldListVersion", source = "searchConfig.fieldListVersion")
     @Mapping(target = "columns", source = "searchConfig.columns")
     @Mapping(target = "advanced", source = "searchConfig.isAdvanced")
-    @Mapping(target = "appId", ignore = true)
-    @Mapping(target = "productName", ignore = true)
     UpdateSearchConfigRequest update(UpdateSearchConfigRequestDTO updateSearchConfigRequestDTO);
 }

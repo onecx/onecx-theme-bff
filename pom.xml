@@ -244,7 +244,7 @@
                         </goals>
                         <configuration>
                             <url>
-                                https://raw.githubusercontent.com/onecx/onecx-search-config-svc/main/src/main/openapi/search-config-openapi-v1.yaml
+                                https://raw.githubusercontent.com/bastianjakobi/onecx-search-config-svc/fix/fix-minor-issues-in-v1/src/main/openapi/search-config-openapi-v1.yaml
                             </url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-search-config-v1.yaml</outputFileName>

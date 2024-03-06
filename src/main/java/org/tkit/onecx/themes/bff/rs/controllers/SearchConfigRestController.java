@@ -112,11 +112,9 @@ public class SearchConfigRestController implements SearchConfigApiService {
                     .build();
         }
         UpdateSearchConfigRequest updatedSearchConfig = mapper.update(updateSearchConfigRequestDTO);
-        updatedSearchConfig.setAppId(configOptions.uiAppID());
-        updatedSearchConfig.setProductName(configOptions.productName());
         try (Response updateResponse = searchConfigApi.updateSearchConfig(configId, updatedSearchConfig)) {
             SearchConfigSearchRequest searchCriteria = new SearchConfigSearchRequest();
-            searchCriteria.setPage(updatedSearchConfig.getPage());
+            searchCriteria.setPage(updateSearchConfigRequestDTO.getSearchConfig().getPage());
             searchCriteria.setAppId(configOptions.uiAppID());
             searchCriteria.setProductName(configOptions.productName());
             try (Response findAllResponse = searchConfigApi.findSearchConfigsBySearchCriteria(searchCriteria)) {
