@@ -19,7 +19,12 @@ public interface SearchConfigMapper {
 
     @Mapping(target = "removeConfigsItem", ignore = true)
     @Mapping(target = "configs", source = "stream")
-    GetSearchConfigsResponseDTO map(SearchConfigSearchPageResult searchConfigSearchPageResult);
+    GetSearchConfigInfosResponseDTO map(SearchConfigSearchPageResult searchConfigSearchPageResult);
+
+    List<SearchConfigInfoDTO> mapInfo(List<SearchConfigSearchResult> searchResultList);
+
+    @Mapping(target = "id", source = "configId")
+    SearchConfigInfoDTO mapInfo(SearchConfigSearchResult searchResult);
 
     @Mapping(target = "removeConfigsItem", ignore = true)
     @Mapping(target = "configs", source = "stream")

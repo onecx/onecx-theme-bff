@@ -69,7 +69,7 @@ public class SearchConfigRestController implements SearchConfigApiService {
     }
 
     @Override
-    public Response getConfigByConfigId(String configId) {
+    public Response getSearchConfig(String configId) {
         if (!configOptions.searchconfig().searchConfigEnabled()) {
             return Response.status(BAD_REQUEST)
                     .entity(exceptionMapper.searchConfigDisabledException())
@@ -81,7 +81,7 @@ public class SearchConfigRestController implements SearchConfigApiService {
     }
 
     @Override
-    public Response getSearchConfigs(String page) {
+    public Response getSearchConfigInfos(String page) {
         if (!configOptions.searchconfig().searchConfigEnabled()) {
             return Response.status(BAD_REQUEST)
                     .entity(exceptionMapper.searchConfigDisabledException())
@@ -92,7 +92,7 @@ public class SearchConfigRestController implements SearchConfigApiService {
         searchCriteria.setAppId(configOptions.uiAppID());
         searchCriteria.setProductName(configOptions.productName());
         try (Response findAllResponse = searchConfigApi.findSearchConfigsBySearchCriteria(searchCriteria)) {
-            GetSearchConfigsResponseDTO responseDTO = mapper
+            GetSearchConfigInfosResponseDTO responseDTO = mapper
                     .map(findAllResponse.readEntity(SearchConfigSearchPageResult.class));
             return Response.status(findAllResponse.getStatus()).entity(responseDTO).build();
         }

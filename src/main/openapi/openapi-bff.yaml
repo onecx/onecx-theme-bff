@@ -387,93 +387,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /searchConfig/:
-    post:
-      tags:
-        - SearchConfig
-      summary: Creates a new search config
-      description: Creates a new search config and returns the updated list of search configs by page
-      operationId: createSearchConfig
-      requestBody:
-        description: Creates a new search config
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateSearchConfigRequest'
-        required: true
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateSearchConfigResponse'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-  /searchConfig/page/{page}:
-    get:
-      tags:
-        - SearchConfig
-      summary: Gets the search configs for the specified page.
-      description: The search config for the page is returned.
-      operationId: getSearchConfigs
-      parameters:
-        - name: page
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSearchConfigsResponse'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /searchConfig/{configId}:
-    get:
-      tags:
-        - SearchConfig
-      summary: Finds search config by it's configId.
-      description: Gets the search config by it's configId.
-      operationId: getConfigByConfigId
-      parameters:
-        - name: configId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SearchConfig'
-        "404":
-          description: Not found
     put:
       tags:
         - SearchConfig
@@ -529,6 +443,105 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /searchConfig/infos/{page}:
+    get:
+      tags:
+        - SearchConfig
+      summary: Gets the search config infos for the specified page.
+      description: The search config for the page is returned.
+      operationId: getSearchConfigInfos
+      parameters:
+        - name: page
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSearchConfigInfosResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /searchConfig/{id}:
+    get:
+      tags:
+        - SearchConfig
+      summary: Gets the search config infos for the specified page.
+      description: The search config for the page is returned.
+      operationId: getSearchConfig
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSearchConfigResponse'
+        '404':
+          description: Not found
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /searchConfig/:
+    post:
+      tags:
+        - SearchConfig
+      summary: Creates a new search config
+      description: Creates a new search config and returns the updated list of search configs by page
+      operationId: createSearchConfig
+      requestBody:
+        description: Creates a new search config
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSearchConfigRequest'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSearchConfigResponse'
         '400':
           description: Bad request
           content:
@@ -802,12 +815,21 @@ components:
       properties:
         id:
           type: string
-    SearchConfig:
-      type: object
+    SearchConfigInfo:
       required:
         - id
-        - page
         - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    SearchConfig:
+      allOf:
+        - $ref: '#/components/schemas/SearchConfigInfo'
+      type: object
+      required:
+        - page
         - modificationCount
         - fieldListVersion
         - isReadonly
@@ -840,9 +862,19 @@ components:
           type: object
           additionalProperties:
             type: string
-    GetSearchConfigsResponse:
+
+    GetSearchConfigInfosResponse:
       allOf:
-        - $ref: '#/components/schemas/SearchConfigList'
+        - $ref: '#/components/schemas/SearchConfigInfoList'
+
+    GetSearchConfigResponse:
+      type: object
+      required:
+        - config
+      properties:
+        config:
+          $ref: '#/components/schemas/SearchConfig'
+
     CreateSearchConfigRequest:
       type: object
       required:
@@ -875,9 +907,11 @@ components:
           type: object
           additionalProperties:
             type: string
+
     CreateSearchConfigResponse:
       allOf:
-        - $ref: '#/components/schemas/SearchConfigList'
+        - $ref: '#/components/schemas/SearchConfigInfoList'
+
     UpdateSearchConfigRequest:
       type: object
       required:
@@ -885,12 +919,15 @@ components:
       properties:
         searchConfig:
           $ref: '#/components/schemas/SearchConfig'
+
     UpdateSearchConfigResponse:
       allOf:
-        - $ref: '#/components/schemas/SearchConfigList'
-    SearchConfigList:
+        - $ref: '#/components/schemas/SearchConfigInfoList'
+
+    SearchConfigInfoList:
       type: object
       required:
+        - totalElements
         - configs
       properties:
         totalElements:
@@ -900,7 +937,7 @@ components:
         configs:
           type: array
           items:
-            $ref: '#/components/schemas/SearchConfig'
+            $ref: '#/components/schemas/SearchConfigInfo'
   parameters:
     pageNumber:
       in: query
