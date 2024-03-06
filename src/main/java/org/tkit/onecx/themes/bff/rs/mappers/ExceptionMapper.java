@@ -50,11 +50,9 @@ public interface ExceptionMapper {
     List<ProblemDetailInvalidParamDTO> createErrorValidationResponse(
             Set<ConstraintViolation<?>> constraintViolation);
 
-    @Mapping(target = "removeParamsItem", ignore = true)
-    @Mapping(target = "params", ignore = true)
-    @Mapping(target = "invalidParams", ignore = true)
-    @Mapping(target = "removeInvalidParamsItem", ignore = true)
-    ProblemDetailResponseDTO searchConfigDisabledException(String errorCode, String detail);
+    default ProblemDetailResponseDTO searchConfigDisabledException() {
+        return this.exception("ERROR_SEARCH_CONFIG_DISABLED", "The search config functionality is disabled for this BFF.");
+    }
 
     @Mapping(target = "name", source = "propertyPath")
     @Mapping(target = "message", source = "message")

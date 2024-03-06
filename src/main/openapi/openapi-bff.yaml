@@ -420,7 +420,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /searchConfig/{page}:
+  /searchConfig/page/{page}:
     get:
       tags:
         - SearchConfig
@@ -453,6 +453,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /searchConfig/{configId}:
+    get:
+      tags:
+        - SearchConfig
+      summary: Finds search config by it's configId.
+      description: Gets the search config by it's configId.
+      operationId: getConfigByConfigId
+      parameters:
+        - name: configId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchConfig'
+        "404":
+          description: Not found
     put:
       tags:
         - SearchConfig
