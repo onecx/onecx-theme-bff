@@ -57,4 +57,11 @@ public interface ExceptionMapper {
     default String mapPath(Path path) {
         return path.toString();
     }
+
+    default ProblemDetailResponseDTO searchConfigDisabledException() {
+        var exception = new ProblemDetailResponseDTO();
+        exception.setErrorCode("ERROR_SEARCH_CONFIG_DISABLED");
+        exception.setDetail("The search config functionality is disabled for this BFF.");
+        return exception;
+    }
 }
