@@ -13,17 +13,12 @@ import gen.org.tkit.onecx.theme.bff.clients.model.RefType;
 @Provider
 @Singleton
 public class RefTypePathParamMapper implements ParamConverterProvider {
-    public RefTypePathParamMapper() {
-
-    }
 
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
         return rawType.isAssignableFrom(RefType.class) ? (ParamConverter<T>) new RefTypeParamConverter() : null;
     }
 
     public static class RefTypeParamConverter implements ParamConverter<RefType> {
-        public RefTypeParamConverter() {
-        }
 
         public RefType fromString(String value) {
             return value != null && !value.isBlank() ? RefType.fromString(value) : null;

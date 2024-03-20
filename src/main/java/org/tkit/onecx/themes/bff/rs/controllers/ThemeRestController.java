@@ -86,6 +86,7 @@ public class ThemeRestController implements ThemesApiService {
             try (Response workspaceResponse = workspaceClient.searchWorkspaces(mapper.map(theme.getName()))) {
                 workspaces = workspaceResponse.readEntity(WorkspacePageResult.class);
             } catch (WebApplicationException ex) {
+                // ignore exception get can continue
             }
             GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme, workspaces);
             return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
@@ -100,6 +101,7 @@ public class ThemeRestController implements ThemesApiService {
             try (Response workspaceResponse = workspaceClient.searchWorkspaces(mapper.map(theme.getName()))) {
                 workspaces = workspaceResponse.readEntity(WorkspacePageResult.class);
             } catch (WebApplicationException ex) {
+                // ignore exception get can continue
             }
             GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme, workspaces);
             return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
