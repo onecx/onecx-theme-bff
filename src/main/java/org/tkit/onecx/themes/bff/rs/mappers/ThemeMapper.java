@@ -51,6 +51,7 @@ public interface ThemeMapper {
     @Mapping(target = "removeThemesItem", ignore = true)
     ImportThemeResponseDTO map(ImportThemeResponse response);
 
+    @Mapping(target = "baseUrl", ignore = true)
     @Mapping(target = "themeName", source = "themeName")
     @Mapping(target = "productName", ignore = true)
     @Mapping(target = "pageNumber", ignore = true)
