@@ -1,0 +1,8 @@
+include::onecx-theme-bff-attributes.adoc[opts=optional]
+
+== onecx-theme-bff
+
+include::docs.adoc[opts=optional]
+
+
+include::onecx-theme-bff-docs.adoc[opts=optional]
