@@ -54,6 +54,7 @@ public interface ThemeMapper {
     @Mapping(target = "baseUrl", ignore = true)
     @Mapping(target = "themeName", source = "themeName")
     @Mapping(target = "productName", ignore = true)
+    @Mapping(target = "workspaceName", ignore = true)
     @Mapping(target = "pageNumber", ignore = true)
     @Mapping(target = "pageSize", ignore = true)
     WorkspaceSearchCriteria map(String themeName);

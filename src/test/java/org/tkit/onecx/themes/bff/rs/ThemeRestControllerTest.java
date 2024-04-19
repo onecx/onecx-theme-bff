@@ -190,7 +190,8 @@ class ThemeRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
-        Assertions.assertNull(output.getWorkspaces());
+        Assertions.assertNotNull(output.getWorkspaces());
+        Assertions.assertTrue(output.getWorkspaces().isEmpty());
     }
 
     @Test
@@ -230,7 +231,8 @@ class ThemeRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getId(), output.getResource().getId());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
-        Assertions.assertNull(output.getWorkspaces());
+        Assertions.assertNotNull(output.getWorkspaces());
+        Assertions.assertTrue(output.getWorkspaces().isEmpty());
     }
 
     @Test
@@ -268,7 +270,8 @@ class ThemeRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getId(), output.getResource().getId());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
-        Assertions.assertNull(output.getWorkspaces());
+        Assertions.assertNotNull(output.getWorkspaces());
+        Assertions.assertTrue(output.getWorkspaces().isEmpty());
     }
 
     @Test
