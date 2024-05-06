@@ -391,6 +391,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .withPriority(100)
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(BAD_REQUEST.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
 
         var exception = given()
@@ -404,6 +405,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
                 .post()
                 .then()
+                .contentType(APPLICATION_JSON)
                 .statusCode(BAD_REQUEST.getStatusCode())
                 .extract().as(ProblemDetailResponseDTO.class);
 
