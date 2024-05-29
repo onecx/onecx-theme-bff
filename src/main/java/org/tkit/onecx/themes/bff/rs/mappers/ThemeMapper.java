@@ -6,6 +6,7 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.model.*;
+import gen.org.tkit.onecx.theme.exim.client.model.EximTheme;
 import gen.org.tkit.onecx.theme.exim.client.model.ExportThemeRequest;
 import gen.org.tkit.onecx.theme.exim.client.model.ImportThemeResponse;
 import gen.org.tkit.onecx.theme.exim.client.model.ThemeSnapshot;
@@ -47,6 +48,9 @@ public interface ThemeMapper {
     ThemeSnapshotDTO map(ThemeSnapshot themeSnapshot);
 
     ThemeSnapshot map(ThemeSnapshotDTO themeSnapshot);
+
+    @Mapping(target = "removeImagesItem", ignore = true)
+    EximThemeDTO map(EximTheme eximTheme);
 
     @Mapping(target = "removeThemesItem", ignore = true)
     ImportThemeResponseDTO map(ImportThemeResponse response);
