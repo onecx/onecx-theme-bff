@@ -10,6 +10,7 @@ import gen.org.tkit.onecx.theme.exim.client.model.EximTheme;
 import gen.org.tkit.onecx.theme.exim.client.model.ExportThemeRequest;
 import gen.org.tkit.onecx.theme.exim.client.model.ImportThemeResponse;
 import gen.org.tkit.onecx.theme.exim.client.model.ThemeSnapshot;
+import gen.org.tkit.onecx.workspace.client.model.WorkspaceAbstract;
 import gen.org.tkit.onecx.workspace.client.model.WorkspacePageResult;
 import gen.org.tkit.onecx.workspace.client.model.WorkspaceSearchCriteria;
 
@@ -29,6 +30,9 @@ public interface ThemeMapper {
     @Mapping(source = "workspacePageResult.stream", target = "workspaces")
     @Mapping(target = "removeWorkspacesItem", ignore = true)
     GetThemeResponseDTO getThemeResponseDTOMapper(Theme theme, WorkspacePageResult workspacePageResult);
+
+    @Mapping(source = "displayName", target = "name")
+    WorkspaceDTO map(WorkspaceAbstract workspaceAbstract);
 
     @Mapping(source = ".", target = "resource")
     CreateThemeResponseDTO createThemeResponseDTOMapper(ThemeDTO dto);

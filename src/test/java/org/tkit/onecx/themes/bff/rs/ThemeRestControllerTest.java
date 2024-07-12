@@ -62,7 +62,7 @@ class ThemeRestControllerTest extends AbstractTest {
         WorkspacePageResult workspaces = new WorkspacePageResult();
         List<WorkspaceAbstract> workspaceList = new ArrayList<>();
         WorkspaceAbstract workspace = new WorkspaceAbstract();
-        workspace.setName("workspace1");
+        workspace.setDisplayName("workspace1");
         workspace.setDescription("description1");
         workspaceList.add(workspace);
         workspaces.setStream(workspaceList);
@@ -98,7 +98,7 @@ class ThemeRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getId(), output.getResource().getId());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
-        Assertions.assertEquals(workspace.getName(), output.getWorkspaces().get(0).getName());
+        Assertions.assertEquals(workspace.getDisplayName(), output.getWorkspaces().get(0).getName());
         Assertions.assertEquals(workspace.getDescription(), output.getWorkspaces().get(0).getDescription());
     }
 
@@ -111,7 +111,7 @@ class ThemeRestControllerTest extends AbstractTest {
         WorkspacePageResult workspaces = new WorkspacePageResult();
         List<WorkspaceAbstract> workspaceList = new ArrayList<>();
         WorkspaceAbstract workspace = new WorkspaceAbstract();
-        workspace.setName("workspace1");
+        workspace.setDisplayName("workspace1");
         workspace.setDescription("description1");
         workspaceList.add(workspace);
         workspaces.setStream(workspaceList);
@@ -146,7 +146,7 @@ class ThemeRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
-        Assertions.assertEquals(workspace.getName(), output.getWorkspaces().get(0).getName());
+        Assertions.assertEquals(workspace.getDisplayName(), output.getWorkspaces().get(0).getName());
         Assertions.assertEquals(workspace.getDescription(), output.getWorkspaces().get(0).getDescription());
     }
 
