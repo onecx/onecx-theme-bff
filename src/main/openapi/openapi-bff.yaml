@@ -582,6 +582,8 @@ components:
    properties:
     name:
      type: string
+    displayName:
+     type: string
     description:
      type: string
   ExportThemeRequest:
