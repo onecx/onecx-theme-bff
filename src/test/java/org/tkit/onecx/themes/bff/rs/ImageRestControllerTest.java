@@ -51,12 +51,12 @@ class ImageRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
-    static final String mockId = "MOCK_IMAGE";
+    static final String MOCK_ID = "MOCK_IMAGE";
 
     @BeforeEach
     void resetExpectation() {
         try {
-            mockServerClient.clear(mockId);
+            mockServerClient.clear(MOCK_ID);
         } catch (Exception ex) {
             //  mockId not existing
         }
@@ -75,7 +75,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
                 .withMethod(HttpMethod.GET))
                 .withPriority(100)
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withHeaders(
                                 new Header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG))
@@ -110,7 +110,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
                 .withMethod(HttpMethod.GET))
                 .withPriority(100)
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withHeaders(
                                 new Header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_JPG))
@@ -144,7 +144,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .withPath("/internal/images/" + refId + "/" + RefType.LOGO)
                 .withMethod(HttpMethod.GET))
                 .withPriority(100)
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.ANY_IMAGE_TYPE)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -171,7 +171,7 @@ class ImageRestControllerTest extends AbstractTest {
         mockServerClient.when(request()
                 .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
                 .withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withHeaders(
@@ -203,7 +203,7 @@ class ImageRestControllerTest extends AbstractTest {
         mockServerClient.when(request()
                 .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
                 .withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
                         .withBody(bytesRes));
@@ -230,7 +230,7 @@ class ImageRestControllerTest extends AbstractTest {
         mockServerClient.when(request()
                 .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
                 .withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode()));
 
@@ -258,7 +258,7 @@ class ImageRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
                 .withPriority(100)
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(imageInfoDTO)));
@@ -291,7 +291,7 @@ class ImageRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
                 .withPriority(100)
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var res = given()
@@ -314,7 +314,6 @@ class ImageRestControllerTest extends AbstractTest {
     void updateImage() {
 
         var refId = "themeName";
-        var refType = "LOGO";
 
         ImageInfoDTO imageInfoDTO = new ImageInfoDTO();
         imageInfoDTO.setId("11-111");
@@ -322,7 +321,7 @@ class ImageRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.PUT))
                 .withPriority(100)
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(imageInfoDTO)));
@@ -357,7 +356,7 @@ class ImageRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.PUT))
                 .withPriority(100)
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var res = given()
@@ -389,7 +388,7 @@ class ImageRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
                 .withPriority(100)
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
