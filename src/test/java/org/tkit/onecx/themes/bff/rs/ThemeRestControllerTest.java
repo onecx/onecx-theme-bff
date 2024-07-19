@@ -39,14 +39,14 @@ class ThemeRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
-    static final String mockId = "MOCK";
-    static final String workspaceMockId = "WORKSPACEMOCK";
+    static final String MOCK_ID = "MOCK";
+    static final String WORKSPACE_MOCK_ID = "WORKSPACEMOCK";
 
     @BeforeEach
     void resetExpectation() {
         try {
-            mockServerClient.clear(mockId);
-            mockServerClient.clear(workspaceMockId);
+            mockServerClient.clear(MOCK_ID);
+            mockServerClient.clear(WORKSPACE_MOCK_ID);
         } catch (Exception ex) {
             //  mockId not existing
         }
@@ -70,7 +70,7 @@ class ThemeRestControllerTest extends AbstractTest {
         criteria.setThemeName(data.getName());
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -78,7 +78,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
-                .withId(workspaceMockId)
+                .withId(WORKSPACE_MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaces)));
@@ -119,7 +119,7 @@ class ThemeRestControllerTest extends AbstractTest {
         criteria.setThemeName(data.getName());
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/name/" + data.getName()).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -127,7 +127,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
-                .withId(workspaceMockId)
+                .withId(WORKSPACE_MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaces)));
@@ -166,14 +166,14 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/name/" + data.getName()).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
-                .withId(workspaceMockId)
+                .withId(WORKSPACE_MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 
         var output = given()
@@ -205,14 +205,14 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
-                .withId(workspaceMockId)
+                .withId(WORKSPACE_MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withBody(JsonBody.json(workspaces)));
 
@@ -245,14 +245,14 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         // create mock rest endpoint for workspace api
         mockServerClient.when(request().withPath("/v1/workspaces/theme/" + data.getName()).withMethod(HttpMethod.GET))
-                .withId(workspaceMockId)
+                .withId(WORKSPACE_MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 
         var output = given()
@@ -281,7 +281,7 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + id).withMethod(HttpMethod.DELETE))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
@@ -306,7 +306,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(data)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(theme)));
@@ -351,7 +351,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(data)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -395,7 +395,7 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -443,7 +443,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -473,7 +473,7 @@ class ThemeRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/search").withMethod(HttpMethod.POST))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -508,7 +508,7 @@ class ThemeRestControllerTest extends AbstractTest {
         theme.setId("testId");
 
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withBody(JsonBody.json(theme))
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -544,7 +544,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateTheme)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withBody(JsonBody.json(problemDetailResponse))
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -579,7 +579,7 @@ class ThemeRestControllerTest extends AbstractTest {
         String notFoundId = "notFound";
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes/" + notFoundId).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var output = given()
@@ -613,7 +613,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/themes/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(exRequest)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(exResponse)));
@@ -644,7 +644,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/themes/import").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(exResponse)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(importThemeResponse)));
@@ -675,7 +675,7 @@ class ThemeRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(createTheme)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
