@@ -25,8 +25,6 @@ import gen.org.tkit.onecx.theme.client.model.ThemePageResult;
 import gen.org.tkit.onecx.theme.exim.client.api.ThemesExportImportApi;
 import gen.org.tkit.onecx.theme.exim.client.model.ImportThemeResponse;
 import gen.org.tkit.onecx.theme.exim.client.model.ThemeSnapshot;
-import gen.org.tkit.onecx.workspace.client.api.WorkspaceExternalApi;
-import gen.org.tkit.onecx.workspace.client.model.WorkspacePageResult;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
@@ -35,10 +33,6 @@ public class ThemeRestController implements ThemesApiService {
     @Inject
     @RestClient
     ThemesInternalApi client;
-
-    @Inject
-    @RestClient
-    WorkspaceExternalApi workspaceClient;
 
     @Inject
     @RestClient
@@ -83,13 +77,7 @@ public class ThemeRestController implements ThemesApiService {
     public Response getThemeById(String id) {
         try (Response response = client.getThemeById(id)) {
             Theme theme = response.readEntity(Theme.class);
-            WorkspacePageResult workspaces = null;
-            try (Response workspaceResponse = workspaceClient.searchWorkspaces(mapper.map(theme.getName()))) {
-                workspaces = workspaceResponse.readEntity(WorkspacePageResult.class);
-            } catch (WebApplicationException ex) {
-                // ignore exception get can continue
-            }
-            GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme, workspaces);
+            GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme);
             return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
         }
     }
@@ -98,13 +86,7 @@ public class ThemeRestController implements ThemesApiService {
     public Response getThemeByName(String name) {
         try (Response response = client.getThemeByThemeDefinitionName(name)) {
             Theme theme = response.readEntity(Theme.class);
-            WorkspacePageResult workspaces = null;
-            try (Response workspaceResponse = workspaceClient.searchWorkspaces(mapper.map(theme.getName()))) {
-                workspaces = workspaceResponse.readEntity(WorkspacePageResult.class);
-            } catch (WebApplicationException ex) {
-                // ignore exception get can continue
-            }
-            GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme, workspaces);
+            GetThemeResponseDTO getThemeResponseDTO = mapper.getThemeResponseDTOMapper(theme);
             return Response.status(response.getStatus()).entity(getThemeResponseDTO).build();
         }
     }

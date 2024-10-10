@@ -10,9 +10,6 @@ import gen.org.tkit.onecx.theme.exim.client.model.EximTheme;
 import gen.org.tkit.onecx.theme.exim.client.model.ExportThemeRequest;
 import gen.org.tkit.onecx.theme.exim.client.model.ImportThemeResponse;
 import gen.org.tkit.onecx.theme.exim.client.model.ThemeSnapshot;
-import gen.org.tkit.onecx.workspace.client.model.WorkspaceAbstract;
-import gen.org.tkit.onecx.workspace.client.model.WorkspacePageResult;
-import gen.org.tkit.onecx.workspace.client.model.WorkspaceSearchCriteria;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface ThemeMapper {
@@ -27,12 +24,7 @@ public interface ThemeMapper {
     UpdateThemeResponseDTO map(Theme theme);
 
     @Mapping(source = "theme", target = "resource")
-    @Mapping(source = "workspacePageResult.stream", target = "workspaces")
-    @Mapping(target = "removeWorkspacesItem", ignore = true)
-    GetThemeResponseDTO getThemeResponseDTOMapper(Theme theme, WorkspacePageResult workspacePageResult);
-
-    @Mapping(source = "displayName", target = "name")
-    WorkspaceDTO map(WorkspaceAbstract workspaceAbstract);
+    GetThemeResponseDTO getThemeResponseDTOMapper(Theme theme);
 
     @Mapping(source = ".", target = "resource")
     CreateThemeResponseDTO createThemeResponseDTOMapper(ThemeDTO dto);
@@ -59,11 +51,4 @@ public interface ThemeMapper {
     @Mapping(target = "removeThemesItem", ignore = true)
     ImportThemeResponseDTO map(ImportThemeResponse response);
 
-    @Mapping(target = "baseUrl", ignore = true)
-    @Mapping(target = "themeName", source = "themeName")
-    @Mapping(target = "productName", ignore = true)
-    @Mapping(target = "workspaceName", ignore = true)
-    @Mapping(target = "pageNumber", ignore = true)
-    @Mapping(target = "pageSize", ignore = true)
-    WorkspaceSearchCriteria map(String themeName);
 }
