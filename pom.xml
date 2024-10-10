@@ -203,21 +203,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>workspace-v1</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>
-                                https://raw.githubusercontent.com/onecx/onecx-workspace-svc/main/src/main/openapi/onecx-workspace-v1-openapi.yaml
-                            </url>
-                            <outputDirectory>target/tmp/openapi</outputDirectory>
-                            <outputFileName>onecx-workspace-svc-v1.yaml</outputFileName>
-                            <skipCache>true</skipCache>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>onecx-image-internal</id>
                         <phase>generate-resources</phase>
                         <goals>
