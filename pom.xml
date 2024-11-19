@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.tkit.onecx</groupId>
         <artifactId>onecx-quarkus3-parent</artifactId>
-        <version>0.67.0</version>
+        <version>0.72.0</version>
     </parent>
 
     <artifactId>onecx-theme-bff</artifactId>
@@ -199,21 +199,6 @@
                             </url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-theme-svc-exim-v1.yaml</outputFileName>
-                            <skipCache>true</skipCache>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>workspace-v1</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>
-                                https://raw.githubusercontent.com/onecx/onecx-workspace-svc/main/src/main/openapi/onecx-workspace-v1-openapi.yaml
-                            </url>
-                            <outputDirectory>target/tmp/openapi</outputDirectory>
-                            <outputFileName>onecx-workspace-svc-v1.yaml</outputFileName>
                             <skipCache>true</skipCache>
                         </configuration>
                     </execution>
