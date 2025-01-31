@@ -81,7 +81,10 @@ app:
     enabled: true
     spec:
      kcConfig:
-      defaultClientScopes: [ ocx-th:all, ocx-ws:read, ocx-pm:read ]
+      defaultClientScopes: [ ocx-th:all, ocx-pm:read ]
+----
+
+read ]
 ----
 
 t.onecx_theme_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter

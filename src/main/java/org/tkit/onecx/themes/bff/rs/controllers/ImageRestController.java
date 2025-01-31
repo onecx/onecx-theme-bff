@@ -17,6 +17,7 @@ import gen.org.tkit.onecx.theme.bff.clients.api.ImagesInternalApi;
 import gen.org.tkit.onecx.theme.bff.clients.model.ImageInfo;
 import gen.org.tkit.onecx.theme.bff.rs.internal.ImagesInternalApiService;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.ImageInfoDTO;
+import gen.org.tkit.onecx.theme.bff.rs.internal.model.MimeTypeDTO;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.RefTypeDTO;
 
 @ApplicationScoped
@@ -58,9 +59,9 @@ public class ImageRestController implements ImagesInternalApiService {
     }
 
     @Override
-    public Response updateImage(String refId, RefTypeDTO refType, byte[] body) {
+    public Response updateImage(String refId, RefTypeDTO refType, MimeTypeDTO mimeType, byte[] body) {
 
-        try (Response response = imageApi.updateImage(refId, imageMapper.map(refType), body,
+        try (Response response = imageApi.updateImage(refId, imageMapper.map(refType), imageMapper.mapMimeType(mimeType), body,
                 headers.getLength())) {
 
             ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
@@ -69,10 +70,10 @@ public class ImageRestController implements ImagesInternalApiService {
     }
 
     @Override
-    public Response uploadImage(String refId, RefTypeDTO refType, byte[] body) {
+    public Response uploadImage(String refId, RefTypeDTO refType, MimeTypeDTO mimeType, byte[] body) {
 
         try (Response response = imageApi.uploadImage(headers.getLength(), refId, imageMapper.map(refType),
-                body)) {
+                imageMapper.mapMimeType(mimeType), body)) {
             ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
             return Response.status(response.getStatus()).entity(imageInfoDTO).build();
         }
