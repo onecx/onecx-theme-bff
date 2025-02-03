@@ -70,7 +70,7 @@ public class ImageRestController implements ImagesInternalApiService {
     }
 
     @Override
-    public Response uploadImage(String refId, RefTypeDTO refType, MimeTypeDTO mimeType, byte[] body) {
+    public Response uploadImage(MimeTypeDTO mimeType, String refId, RefTypeDTO refType, byte[] body) {
 
         try (Response response = imageApi.uploadImage(headers.getLength(), refId, imageMapper.map(refType),
                 imageMapper.mapMimeType(mimeType), body)) {
