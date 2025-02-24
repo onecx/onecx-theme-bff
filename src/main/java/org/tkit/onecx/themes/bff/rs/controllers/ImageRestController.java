@@ -39,6 +39,13 @@ public class ImageRestController implements ImagesInternalApiService {
     HttpHeaders headers;
 
     @Override
+    public Response deleteImage(String refId, RefTypeDTO refType) {
+        try (Response response = imageApi.deleteImage(refId, imageMapper.map(refType))) {
+            return Response.status(response.getStatus()).build();
+        }
+    }
+
+    @Override
     public Response getImage(String refId, RefTypeDTO refType) {
         Response.ResponseBuilder responseBuilder;
         try (Response response = imageApi.getImage(refId, imageMapper.map(refType))) {

@@ -357,6 +357,27 @@ class ImageRestControllerTest extends AbstractTest {
     }
 
     @Test
+    void deleteImage() {
+        var refId = "workspaceName";
+        mockServerClient
+                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.DELETE))
+                .withPriority(100)
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(NO_CONTENT.getStatusCode()));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .pathParam("refId", refId)
+                .pathParam("refType", RefTypeDTO.LOGO)
+                .when()
+                .delete()
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+    }
+
+    @Test
     void testMaxUploadSize() {
 
         var refId = "themeMaxUpload";
