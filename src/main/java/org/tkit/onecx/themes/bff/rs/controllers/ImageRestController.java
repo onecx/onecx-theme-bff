@@ -39,6 +39,13 @@ public class ImageRestController implements ImagesInternalApiService {
     HttpHeaders headers;
 
     @Override
+    public Response deleteImage(String refId, RefTypeDTO refType) {
+        try (Response response = imageApi.deleteImage(refId, imageMapper.map(refType))) {
+            return Response.status(response.getStatus()).build();
+        }
+    }
+
+    @Override
     public Response getImage(String refId, RefTypeDTO refType) {
         Response.ResponseBuilder responseBuilder;
         try (Response response = imageApi.getImage(refId, imageMapper.map(refType))) {
@@ -55,17 +62,6 @@ public class ImageRestController implements ImagesInternalApiService {
             }
 
             return responseBuilder.build();
-        }
-    }
-
-    @Override
-    public Response updateImage(String refId, RefTypeDTO refType, MimeTypeDTO mimeType, byte[] body) {
-
-        try (Response response = imageApi.updateImage(refId, imageMapper.map(refType), imageMapper.mapMimeType(mimeType), body,
-                headers.getLength())) {
-
-            ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
-            return Response.status(response.getStatus()).entity(imageInfoDTO).build();
         }
     }
 
