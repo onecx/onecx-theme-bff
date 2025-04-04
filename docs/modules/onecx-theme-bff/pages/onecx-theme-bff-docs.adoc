@@ -82,12 +82,13 @@ app:
     spec:
      kcConfig:
       defaultClientScopes: [ ocx-th:all, ocx-pm:read ]
+  microservice:
+   spec:
+    description: OneCX Theme Backend For Frontend
+    name: OneCX Theme BFF
 ----
 
-read ]
-----
-
-t.onecx_theme_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+tiveFilter
 %prod.quarkus.rest-client.onecx_image_internal.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 ----
 ====
