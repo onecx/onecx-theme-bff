@@ -18,3 +18,7 @@ app:
     spec:
      kcConfig:
       defaultClientScopes: [ ocx-th:all, ocx-pm:read ]
+  microservice:
+   spec:
+    description: OneCX Theme Backend For Frontend
+    name: OneCX Theme BFF
