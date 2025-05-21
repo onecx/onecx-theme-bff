@@ -1,7 +1,6 @@
 package org.tkit.onecx.themes.bff.rs.mappers;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.ValueMapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import gen.org.tkit.onecx.theme.bff.clients.model.ImageInfo;
@@ -20,6 +19,15 @@ public interface ImageMapper {
 
     RefType map(RefTypeDTO refType);
 
-    @ValueMapping(target = "X_MINUS_ICON", source = "X_ICON")
-    MimeType mapMimeType(MimeTypeDTO mimeType);
+    default MimeType mapMimeType(MimeTypeDTO mimeType) {
+        if (mimeType == null) {
+            return null;
+        }
+        return switch (mimeType) {
+            case IMAGE_X_ICON -> MimeType.IMAGE_SLASH_X_MINUS_ICON;
+            case IMAGE_PNG -> MimeType.IMAGE_SLASH_PNG;
+            case IMAGE_JPG -> MimeType.IMAGE_SLASH_JPG;
+            case IMAGE_JPEG -> MimeType.IMAGE_SLASH_JPEG;
+        };
+    }
 }
