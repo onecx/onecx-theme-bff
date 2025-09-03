@@ -2,12 +2,12 @@
 openapi: 3.0.3
 info:
  title: onecx-theme-bff
- description: OneCx theme Bff
+ description: OneCX Theme BFF
  version: '1.0'
 servers:
  - url: http://onecx-theme-bff:8080/
 tags:
- - name: theme
+ - name: themes
  - name: imagesInternal
 paths:
  /themes:
