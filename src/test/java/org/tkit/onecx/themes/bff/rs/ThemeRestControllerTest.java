@@ -212,47 +212,6 @@ class ThemeRestControllerTest extends AbstractTest {
     }
 
     @Test
-    void getAllThemesTest() {
-        Theme t1 = new Theme();
-        t1.setId("1");
-        t1.setName("test name");
-
-        Theme t2 = new Theme();
-        t2.setId("2");
-        t2.setName("test name");
-
-        ThemePageResult data = new ThemePageResult();
-        data.setNumber(1);
-        data.setSize(2);
-        data.setTotalElements(2L);
-        data.setTotalPages(1L);
-        data.setStream(List.of(t1, t2));
-
-        // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/themes").withMethod(HttpMethod.GET))
-                .withId(MOCK_ID)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(data)));
-
-        var output = given()
-                .when()
-                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
-                .header(APM_HEADER_PARAM, ADMIN)
-                .contentType(APPLICATION_JSON)
-                .get()
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(GetThemesResponseDTO.class);
-
-        Assertions.assertNotNull(output);
-        Assertions.assertEquals(data.getSize(), output.getSize());
-        Assertions.assertEquals(data.getStream().size(), output.getStream().size());
-        Assertions.assertEquals(data.getStream().get(0).getName(), output.getStream().get(0).getName());
-    }
-
-    @Test
     void searchThemeByCriteriaTest() {
         ThemeSearchCriteria criteria = new ThemeSearchCriteria();
         criteria.setPageNumber(1);

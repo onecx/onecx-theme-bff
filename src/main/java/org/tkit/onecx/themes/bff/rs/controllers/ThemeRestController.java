@@ -92,15 +92,6 @@ public class ThemeRestController implements ThemesApiService {
     }
 
     @Override
-    public Response getThemes(Integer pageNumber, Integer pageSize) {
-        try (Response response = client.getThemes(pageNumber, pageSize)) {
-            GetThemesResponseDTO getThemesResponseDTO = mapper
-                    .getThemesResponseMapper(response.readEntity(ThemePageResult.class));
-            return Response.status(response.getStatus()).entity(getThemesResponseDTO).build();
-        }
-    }
-
-    @Override
     public Response importThemes(ThemeSnapshotDTO themeSnapshotDTO) {
         try (Response response = eximClient.importThemes(mapper.map(themeSnapshotDTO))) {
             return Response.status(response.getStatus())
