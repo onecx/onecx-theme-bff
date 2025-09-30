@@ -30,6 +30,7 @@ public interface ImageMapper {
             case IMAGE_PNG -> MimeType.IMAGE_SLASH_PNG;
             case IMAGE_JPG -> MimeType.IMAGE_SLASH_JPG;
             case IMAGE_JPEG -> MimeType.IMAGE_SLASH_JPEG;
+            case IMAGE_SVG_XML -> MimeType.IMAGE_SLASH_SVG_PLUS_XML;
         };
     }
 }
