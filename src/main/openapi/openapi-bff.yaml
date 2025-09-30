@@ -336,7 +336,7 @@ components:
    enum: [ logo, logo-small, favicon ]
   MimeType:
    type: string
-   enum: [ "image/x-icon", "image/png", "image/jpg", "image/jpeg" ]
+   enum: [ "image/x-icon", "image/svg+xml", "image/png", "image/jpg", "image/jpeg" ]
   Theme:
    type: object
    properties:
