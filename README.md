@@ -1,2 +1,2 @@
 # onecx-theme-bff
-OneCx Theme Backend-For-Frontend (BFF)
+OneCX Theme Backend-For-Frontend (BFF)
