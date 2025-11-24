@@ -377,6 +377,8 @@ components:
      type: string
     properties:
      type: object
+    overrides:
+     type: object
     operator:
      type: boolean
     mandatory:
@@ -419,6 +421,8 @@ components:
     assetsUpdateDate:
      type: string
     properties:
+     type: object
+    overrides:
      type: object
     mandatory:
      type: boolean
@@ -600,6 +604,8 @@ components:
     assetsUpdateDate:
      type: string
     properties:
+     type: object
+    overrides:
      type: object
     images:
      $ref: '#/components/schemas/Images'
