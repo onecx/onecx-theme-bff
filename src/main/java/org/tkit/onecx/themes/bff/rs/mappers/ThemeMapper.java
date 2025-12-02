@@ -23,6 +23,9 @@ public interface ThemeMapper {
     @Mapping(source = ".", target = "resource")
     UpdateThemeResponseDTO map(Theme theme);
 
+    @Mapping(target = "removeOverridesItem", ignore = true)
+    ThemeDTO mapTheme(Theme theme);
+
     @Mapping(source = "theme", target = "resource")
     GetThemeResponseDTO getThemeResponseDTOMapper(Theme theme);
 
@@ -30,7 +33,6 @@ public interface ThemeMapper {
     CreateThemeResponseDTO createThemeResponseDTOMapper(ThemeDTO dto);
 
     @Mapping(target = "removeStreamItem", ignore = true)
-    //    @Mapping(target = "stream.version", ignore = true)
     GetThemesResponseDTO getThemesResponseMapper(ThemePageResult pageResult);
 
     @Mapping(target = "removeStreamItem", ignore = true)
@@ -45,6 +47,7 @@ public interface ThemeMapper {
 
     ThemeSnapshot map(ThemeSnapshotDTO themeSnapshot);
 
+    @Mapping(target = "removeOverridesItem", ignore = true)
     @Mapping(target = "removeImagesItem", ignore = true)
     EximThemeDTO map(EximTheme eximTheme);
 
