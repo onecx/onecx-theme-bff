@@ -378,7 +378,9 @@ components:
     properties:
      type: object
     overrides:
-     type: object
+     type: array
+     items:
+      $ref: '#/components/schemas/ThemeOverride'
     operator:
      type: boolean
     mandatory:
@@ -423,7 +425,9 @@ components:
     properties:
      type: object
     overrides:
-     type: object
+     type: array
+     items:
+      $ref: '#/components/schemas/ThemeOverride'
     mandatory:
      type: boolean
      default: false
@@ -606,12 +610,26 @@ components:
     properties:
      type: object
     overrides:
-     type: object
+     type: array
+     items:
+      $ref: '#/components/schemas/ThemeOverride'
     images:
      $ref: '#/components/schemas/Images'
     mandatory:
      type: boolean
      default: false
+  ThemeOverride:
+   type: object
+   properties:
+    type:
+     $ref: '#/components/schemas/OverrideType'
+    value:
+     type: string
+  OverrideType:
+   type: string
+   enum:
+    - PRIMENG
+    - CSS
   Images:
    type: object
    nullable: false
