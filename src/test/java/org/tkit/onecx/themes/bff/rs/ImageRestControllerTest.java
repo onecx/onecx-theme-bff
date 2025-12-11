@@ -8,6 +8,7 @@ import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 import java.io.*;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -24,13 +25,11 @@ import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
 import org.tkit.onecx.themes.bff.rs.controllers.ImageRestController;
 
+import gen.org.tkit.onecx.theme.bff.clients.model.AvailableImageTypes;
 import gen.org.tkit.onecx.theme.bff.clients.model.MimeType;
 import gen.org.tkit.onecx.theme.bff.clients.model.ProblemDetailResponse;
 import gen.org.tkit.onecx.theme.bff.clients.model.RefType;
-import gen.org.tkit.onecx.theme.bff.rs.internal.model.ImageInfoDTO;
-import gen.org.tkit.onecx.theme.bff.rs.internal.model.MimeTypeDTO;
-import gen.org.tkit.onecx.theme.bff.rs.internal.model.ProblemDetailResponseDTO;
-import gen.org.tkit.onecx.theme.bff.rs.internal.model.RefTypeDTO;
+import gen.org.tkit.onecx.theme.bff.rs.internal.model.*;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -88,7 +87,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refType}")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG)
@@ -123,7 +122,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refType}")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_JPG)
@@ -156,7 +155,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
-                .get()
+                .get("/{refType}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
     }
@@ -185,7 +184,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refType}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 
@@ -215,7 +214,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refType}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 
@@ -241,7 +240,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refType}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 
@@ -276,7 +275,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .post()
+                .post("/{refType}")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -310,7 +309,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
                 .when()
-                .post()
+                .post("/{refType}")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(res);
@@ -344,7 +343,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .post()
+                .post("/{refType}")
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -370,7 +369,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
                 .when()
-                .delete()
+                .delete("/{refType}")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
     }
@@ -406,7 +405,7 @@ class ImageRestControllerTest extends AbstractTest {
                 .when()
                 .body(body)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .post()
+                .post("/{refType}")
                 .then()
                 .contentType(APPLICATION_JSON)
                 .statusCode(BAD_REQUEST.getStatusCode())
@@ -415,6 +414,35 @@ class ImageRestControllerTest extends AbstractTest {
         assertThat(exception.getErrorCode()).isEqualTo("CONSTRAINT_VIOLATIONS");
         assertThat(exception.getDetail()).isEqualTo(
                 "uploadImage.contentLength: must be less than or equal to 110000");
+
+    }
+
+    @Test
+    void getAvailableImageTypesOfTheme_test() {
+
+        AvailableImageTypes types = new AvailableImageTypes();
+        types.setTypes(List.of("someType", "favicon"));
+
+        mockServerClient.when(request().withPath("/internal/images/theme1/availableTypes").withMethod(HttpMethod.GET))
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(types)));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("refId", "theme1")
+                .get("/availableTypes")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(AvailableImageTypesDTO.class);
+
+        Assertions.assertEquals(types.getTypes().size(), output.getTypes().size());
+        mockServerClient.clear(MOCK_ID);
 
     }
 }

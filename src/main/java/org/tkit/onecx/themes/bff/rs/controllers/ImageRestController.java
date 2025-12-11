@@ -14,11 +14,11 @@ import org.tkit.onecx.themes.bff.rs.mappers.ImageMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.theme.bff.clients.api.ImagesInternalApi;
+import gen.org.tkit.onecx.theme.bff.clients.model.AvailableImageTypes;
 import gen.org.tkit.onecx.theme.bff.clients.model.ImageInfo;
 import gen.org.tkit.onecx.theme.bff.rs.internal.ImagesInternalApiService;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.ImageInfoDTO;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.MimeTypeDTO;
-import gen.org.tkit.onecx.theme.bff.rs.internal.model.RefTypeDTO;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
@@ -39,16 +39,24 @@ public class ImageRestController implements ImagesInternalApiService {
     HttpHeaders headers;
 
     @Override
-    public Response deleteImage(String refId, RefTypeDTO refType) {
-        try (Response response = imageApi.deleteImage(refId, imageMapper.map(refType))) {
+    public Response deleteImage(String refId, String refType) {
+        try (Response response = imageApi.deleteImage(refId, refType)) {
             return Response.status(response.getStatus()).build();
         }
     }
 
     @Override
-    public Response getImage(String refId, RefTypeDTO refType) {
+    public Response getAvailableImageTypes(String refId) {
+        try (Response response = imageApi.getAvailableImageTypes(refId)) {
+            var availableImageTypesDTO = imageMapper.mapAvailableImageTypes(response.readEntity(AvailableImageTypes.class));
+            return Response.status(response.getStatus()).entity(availableImageTypesDTO).build();
+        }
+    }
+
+    @Override
+    public Response getImage(String refId, String refType) {
         Response.ResponseBuilder responseBuilder;
-        try (Response response = imageApi.getImage(refId, imageMapper.map(refType))) {
+        try (Response response = imageApi.getImage(refId, refType)) {
             var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
             var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
             var body = response.readEntity(byte[].class);
@@ -66,9 +74,9 @@ public class ImageRestController implements ImagesInternalApiService {
     }
 
     @Override
-    public Response uploadImage(MimeTypeDTO mimeType, String refId, RefTypeDTO refType, byte[] body) {
+    public Response uploadImage(MimeTypeDTO mimeType, String refId, String refType, byte[] body) {
 
-        try (Response response = imageApi.uploadImage(headers.getLength(), refId, imageMapper.map(refType),
+        try (Response response = imageApi.uploadImage(headers.getLength(), refId, refType,
                 imageMapper.mapMimeType(mimeType), body)) {
             ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
             return Response.status(response.getStatus()).entity(imageInfoDTO).build();
