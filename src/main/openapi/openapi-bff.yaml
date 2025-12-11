@@ -250,7 +250,7 @@ paths:
       in: path
       required: true
       schema:
-       $ref: "#/components/schemas/RefType"
+       type: string
    responses:
     "200":
      description: Image retrieved successfully
@@ -288,7 +288,7 @@ paths:
       in: path
       required: true
       schema:
-       $ref: "#/components/schemas/RefType"
+       type: string
    operationId: uploadImage
    requestBody:
     required: true
@@ -325,10 +325,100 @@ paths:
       in: path
       required: true
       schema:
-       $ref: "#/components/schemas/RefType"
+       type: string
    responses:
     "204":
      description: Image deleted successfully
+ /images/{refId}/availableTypes:
+  get:
+   x-onecx:
+    permissions:
+     themes:
+      - read
+   tags:
+    - imagesInternal
+   description: Get available image types
+   operationId: getAvailableImageTypes
+   parameters:
+    - name: refId
+      in: path
+      required: true
+      schema:
+       type: string
+   responses:
+    "200":
+     description: Available image types retrieved successfully
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/AvailableImageTypes'
+ /icons/{refId}:
+  post:
+   x-onecx:
+    permissions:
+     themes:
+      - read
+   tags:
+    - iconsInternal
+   description: Retrieve icons by list of names and refId
+   parameters:
+    - name: refId
+      in: path
+      required: true
+      schema:
+       type: string
+   operationId: findIconsByNamesAndRefId
+   requestBody:
+    required: true
+    content:
+     application/json:
+      schema:
+       $ref: '#/components/schemas/IconCriteria'
+   responses:
+    "200":
+     description: Icons retrieved successfully
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/IconListResponse'
+    "400":
+     description: Bad Request
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/ProblemDetailResponse'
+ /icons/{refId}/upload:
+  post:
+   x-onecx:
+    permissions:
+     themes:
+      - read
+   tags:
+    - iconsInternal
+   description: Upload an icon set by its reference id
+   parameters:
+    - name: refId
+      in: path
+      required: true
+      schema:
+       type: string
+   operationId: uploadIconSet
+   requestBody:
+    required: true
+    content:
+     application/json:
+      schema:
+       type: string
+       format: binary
+   responses:
+    "201":
+     description: Icon uploaded successfully
+    "400":
+     description: Bad Request
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/ProblemDetailResponse'
 components:
  schemas:
   RefType:
@@ -337,6 +427,45 @@ components:
   MimeType:
    type: string
    enum: [ "image/x-icon", "image/svg+xml", "image/png", "image/jpg", "image/jpeg" ]
+  AvailableImageTypes:
+   type: object
+   properties:
+    types:
+     type: array
+     items:
+      type: string
+  IconCriteria:
+   type: object
+   required:
+    - names
+   properties:
+    names:
+     type: array
+     minItems: 1
+     items:
+      type: string
+  IconListResponse:
+   type: object
+   properties:
+    icons:
+     type: array
+     items:
+      $ref: '#/components/schemas/Icon'
+  Icon:
+   type: object
+   required:
+    - name
+    - type
+    - body
+   properties:
+    name:
+     type: string
+    type:
+     type: string
+    body:
+     type: string
+    parent:
+     type: string
   Theme:
    type: object
    properties:
