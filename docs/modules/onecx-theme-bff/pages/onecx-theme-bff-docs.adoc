@@ -45,7 +45,7 @@ quarkus.openapi-generator.codegen.spec.onecx_theme_icon_internal_yaml.additional
 quarkus.openapi-generator.codegen.spec.onecx_theme_icon_internal_yaml.type-mappings.File=byte[]
 quarkus.openapi-generator.codegen.spec.onecx_theme_icon_internal_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
 quarkus.openapi-generator.codegen.spec.onecx_theme_icon_internal_yaml.enable-security-generation=false
-%prod.quarkus.oidc-client.client-id=${ONECX_OIDC_CLIENT_CLIENT_ID:${quarkus.application.name}}
+%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 %prod.quarkus.rest-client.onecx_theme_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_image_internal.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 ----
@@ -71,8 +71,6 @@ Default values
 ----
 app:
  name: bff
- template:
-  oidc_client_id: "ONECX_OIDC_CLIENT_CLIENT_ID"
  image:
   repository: "onecx/onecx-theme-bff"
  operator:
