@@ -1,8 +1,7 @@
 include::onecx-theme-bff-attributes.adoc[opts=optional]
 
-== onecx-theme-bff
+= OneCX Theme Backend For Frontend
 
-include::docs.adoc[opts=optional]
 
 
 include::onecx-theme-bff-docs.adoc[opts=optional]
