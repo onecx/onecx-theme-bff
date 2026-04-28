@@ -13,6 +13,7 @@ import org.tkit.onecx.themes.bff.rs.mappers.IconMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.theme.bff.clients.api.IconsInternalApi;
+import gen.org.tkit.onecx.theme.bff.clients.model.GetIconSetsResponse;
 import gen.org.tkit.onecx.theme.bff.clients.model.IconListResponse;
 import gen.org.tkit.onecx.theme.bff.rs.internal.IconsInternalApiService;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.IconCriteriaDTO;
@@ -33,8 +34,23 @@ public class IconRestController implements IconsInternalApiService {
     ExceptionMapper exceptionMapper;
 
     @Override
-    public Response findIconsByNamesAndRefId(String refId, IconCriteriaDTO iconCriteriaDTO) {
-        try (Response response = iconsApi.findIconsByNamesAndRefId(refId, iconMapper.mapCriteria(iconCriteriaDTO))) {
+    public Response deleteIconSetByRefIdAndPrefix(String refId, String prefix) {
+        try (Response response = iconsApi.deleteIconSetByRefIdAndPrefix(refId, prefix)) {
+            return Response.status(response.getStatus()).build();
+        }
+    }
+
+    @Override
+    public Response findIconSetsByRefId(String refId) {
+        try (Response response = iconsApi.findIconSetsByRefId(refId)) {
+            var mappedIconSetList = iconMapper.mapIconSets(response.readEntity(GetIconSetsResponse.class));
+            return Response.status(response.getStatus()).entity(mappedIconSetList).build();
+        }
+    }
+
+    @Override
+    public Response findIconsByCriteria(String refId, IconCriteriaDTO iconCriteriaDTO) {
+        try (Response response = iconsApi.findIconsByCriteria(refId, iconMapper.mapCriteria(iconCriteriaDTO))) {
 
             var mappedIconList = iconMapper.map(response.readEntity(IconListResponse.class));
             return Response.status(response.getStatus()).entity(mappedIconList).build();

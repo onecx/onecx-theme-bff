@@ -2,6 +2,7 @@ package org.tkit.onecx.themes.bff.rs;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
@@ -85,7 +86,7 @@ class IconRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(criteriaDTO)
                 .pathParam("refId", "theme1")
-                .post()
+                .post("/icons/{refId}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -98,15 +99,13 @@ class IconRestControllerTest extends AbstractTest {
     @Test
     void findIconsByNamesAndRefId_Missing_Criteria_Test() {
 
-        IconCriteriaDTO criteriaDTO = new IconCriteriaDTO();
         given()
                 .when()
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .body(criteriaDTO)
                 .pathParam("refId", "theme1")
-                .post()
+                .post("/icons/{refId}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
     }
@@ -129,7 +128,7 @@ class IconRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(criteriaDTO)
                 .pathParam("refId", "theme1")
-                .post()
+                .post("/icons/{refId}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
 
@@ -142,7 +141,7 @@ class IconRestControllerTest extends AbstractTest {
         var refId = "themeName";
 
         mockServerClient
-                .when(request().withPath("/internal/icons/themeName/upload")
+                .when(request().withPath("/internal/iconsets/themeName")
                         .withMethod(HttpMethod.POST))
                 .withPriority(100)
                 .withId(MOCK_ID)
@@ -156,8 +155,66 @@ class IconRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(APPLICATION_JSON)
-                .post("/upload")
+                .post("/iconsets/{refId}")
                 .then()
                 .statusCode(OK.getStatusCode());
+    }
+
+    @Test
+    void getIconSetsByRefId_Test() {
+
+        var refId = "themeName";
+
+        GetIconSetsResponse response = new GetIconSetsResponse();
+        IconSet iconSet = new IconSet();
+        iconSet.setPrefix("mdi");
+        response.setIconSets(List.of(iconSet));
+
+        mockServerClient
+                .when(request().withPath("/internal/iconsets/themeName").withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(response)));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("refId", refId)
+                .get("/iconsets/{refId}")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetIconSetsResponseDTO.class);
+
+        Assertions.assertEquals(response.getIconSets().size(), output.getIconSets().size());
+    }
+
+    @Test
+    void deleteIconSet_Test() {
+
+        var refId = "themeName";
+
+        mockServerClient
+                .when(request().withPath("/internal/iconsets/themeName/mdi")
+                        .withMethod(HttpMethod.DELETE))
+                .withPriority(100)
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(NO_CONTENT.getStatusCode()));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .pathParam("refId", refId)
+                .pathParam("prefix", "mdi")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .delete("/iconsets/{refId}/{prefix}")
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
     }
 }

@@ -4,8 +4,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
+import gen.org.tkit.onecx.theme.bff.clients.model.GetIconSetsResponse;
 import gen.org.tkit.onecx.theme.bff.clients.model.IconCriteria;
 import gen.org.tkit.onecx.theme.bff.clients.model.IconListResponse;
+import gen.org.tkit.onecx.theme.bff.rs.internal.model.GetIconSetsResponseDTO;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.IconCriteriaDTO;
 import gen.org.tkit.onecx.theme.bff.rs.internal.model.IconListResponseDTO;
 
@@ -15,4 +17,7 @@ public interface IconMapper {
 
     @Mapping(target = "removeIconsItem", ignore = true)
     IconListResponseDTO map(IconListResponse iconListResponse);
+
+    @Mapping(target = "removeIconSetsItem", ignore = true)
+    GetIconSetsResponseDTO mapIconSets(GetIconSetsResponse getIconSetsResponse);
 }
