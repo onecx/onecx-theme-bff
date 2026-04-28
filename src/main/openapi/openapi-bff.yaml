@@ -367,7 +367,7 @@ paths:
       required: true
       schema:
        type: string
-   operationId: findIconsByNamesAndRefId
+   operationId: findIconsByCriteria
    requestBody:
     required: true
     content:
@@ -387,12 +387,40 @@ paths:
       application/json:
        schema:
         $ref: '#/components/schemas/ProblemDetailResponse'
- /icons/{refId}/upload:
+ /iconsets/{refId}:
+  get:
+   x-onecx:
+     permissions:
+       themes:
+         - read
+   tags:
+     - iconsInternal
+   description: Retrieve all icon sets by reference id
+   parameters:
+     - name: refId
+       in: path
+       required: true
+       schema:
+         type: string
+   operationId: findIconSetsByRefId
+   responses:
+     "200":
+       description: Icon sets retrieved successfully
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/GetIconSetsResponse'
+     "400":
+       description: Bad request
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/ProblemDetailResponse'
   post:
    x-onecx:
     permissions:
      themes:
-      - read
+      - write
    tags:
     - iconsInternal
    description: Upload an icon set by its reference id
@@ -419,8 +447,50 @@ paths:
       application/json:
        schema:
         $ref: '#/components/schemas/ProblemDetailResponse'
+ /iconsets/{refId}/{prefix}:
+   delete:
+     x-onecx:
+       permissions:
+         themes:
+           - delete
+     tags:
+       - iconsInternal
+     description: Delete icon set by reference id and prefix
+     parameters:
+       - name: refId
+         in: path
+         required: true
+         schema:
+           type: string
+       - name: prefix
+         in: path
+         required: true
+         schema:
+           type: string
+     operationId: deleteIconSetByRefIdAndPrefix
+     responses:
+       "204":
+         description: Iconset deleted successfully
+       "400":
+         description: Bad request
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ProblemDetailResponse'
 components:
  schemas:
+  GetIconSetsResponse:
+   type: object
+   properties:
+     iconSets:
+       type: array
+       items:
+         $ref: '#/components/schemas/IconSet'
+  IconSet:
+   type: object
+   required:
+     - refId
+     - prefix
   RefType:
    type: string
    enum: [ logo, logo-small, favicon ]
@@ -439,9 +509,10 @@ components:
    required:
     - names
    properties:
+    prefix:
+     type: string
     names:
      type: array
-     minItems: 1
      items:
       type: string
   IconListResponse:
