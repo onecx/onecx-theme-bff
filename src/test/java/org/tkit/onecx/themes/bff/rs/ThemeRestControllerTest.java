@@ -44,7 +44,7 @@ class ThemeRestControllerTest extends AbstractTest {
         try {
             mockServerClient.clear(MOCK_ID);
             mockServerClient.clear(WORKSPACE_MOCK_ID);
-        } catch (Exception ex) {
+        } catch (Exception _) {
             //  mockId not existing
         }
     }

@@ -110,7 +110,7 @@ public class ThemeRestController implements ThemesApiService {
 
     @Override
     public Response updateTheme(String id, UpdateThemeRequestDTO updateThemeRequestDTO) {
-        try (Response response = client.updateTheme(id, mapper.mapUpdate(updateThemeRequestDTO))) {
+        try (Response _ = client.updateTheme(id, mapper.mapUpdate(updateThemeRequestDTO))) {
             try (Response updatedThemeResponse = client.getThemeById(id)) {
                 UpdateThemeResponseDTO updateThemeResponseDTO = mapper.map(updatedThemeResponse.readEntity(Theme.class));
                 return Response.ok(updateThemeResponseDTO).build();
