@@ -829,7 +829,7 @@ components:
     fonts:
       type: string
     customCssVariables:
-      type: string
+      type: object
   ThemeOverride:
    type: object
    properties:
