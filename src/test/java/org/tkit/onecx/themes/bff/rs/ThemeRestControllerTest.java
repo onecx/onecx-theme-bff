@@ -330,6 +330,90 @@ class ThemeRestControllerTest extends AbstractTest {
     }
 
     @Test
+    void getThemeByIdWithOverridePositionTest() {
+        var override = new gen.org.tkit.onecx.theme.client.model.ThemeOverride();
+        override.setType(gen.org.tkit.onecx.theme.client.model.OverrideType.CSS);
+        override.setValue(".a {}");
+        override.setPosition(3);
+        override.setAlias("my-alias");
+        Theme data = new Theme();
+        data.setId("test-id-2");
+        data.setName("test-name");
+        data.setOverrides(List.of(override));
+
+        mockServerClient.when(request().withPath("/internal/themes/" + data.getId()).withMethod(HttpMethod.GET))
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(data)));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", data.getId())
+                .get("/{id}")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetThemeResponseDTO.class);
+
+        Assertions.assertEquals(3, output.getResource().getOverrides().get(0).getPosition());
+        Assertions.assertEquals("my-alias", output.getResource().getOverrides().get(0).getAlias());
+    }
+
+    @Test
+    void updateThemeWithOverridePositionTest() {
+        String testId = "testId";
+        var clientOverride = new gen.org.tkit.onecx.theme.client.model.ThemeOverride();
+        clientOverride.setType(gen.org.tkit.onecx.theme.client.model.OverrideType.PRIMENG);
+        clientOverride.setValue(".a {}");
+        clientOverride.setPosition(2);
+        clientOverride.setAlias("my-alias");
+        UpdateTheme updateTheme = new UpdateTheme();
+        updateTheme.setName("test-name");
+        updateTheme.setOverrides(List.of(clientOverride));
+
+        // the mock only matches when the position is forwarded to the service
+        mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.PUT)
+                .withBody(JsonBody.json(updateTheme)))
+                .withId(WORKSPACE_MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode()));
+
+        Theme theme = new Theme();
+        theme.setName("test-name");
+        theme.setId(testId);
+        mockServerClient.when(request().withPath("/internal/themes/" + testId).withMethod(HttpMethod.GET))
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withBody(JsonBody.json(theme))
+                        .withContentType(MediaType.APPLICATION_JSON));
+
+        var dtoOverride = new ThemeOverrideDTO();
+        dtoOverride.setType(OverrideTypeDTO.PRIMENG);
+        dtoOverride.setValue(".a {}");
+        dtoOverride.setPosition(2);
+        dtoOverride.setAlias("my-alias");
+        ThemeUpdateCreateDTO updateCreateDTO = new ThemeUpdateCreateDTO();
+        updateCreateDTO.setName("test-name");
+        updateCreateDTO.setOverrides(List.of(dtoOverride));
+        UpdateThemeRequestDTO input = new UpdateThemeRequestDTO();
+        input.setResource(updateCreateDTO);
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", testId)
+                .body(input)
+                .put("/{id}")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode());
+    }
+
+    @Test
     void updateThemeFailTest() {
         String testId = "testId";
         UpdateTheme updateTheme = new UpdateTheme();
