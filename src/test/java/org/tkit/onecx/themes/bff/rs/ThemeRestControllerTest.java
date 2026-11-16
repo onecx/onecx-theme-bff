@@ -334,7 +334,7 @@ class ThemeRestControllerTest extends AbstractTest {
         var override = new gen.org.tkit.onecx.theme.client.model.ThemeOverride();
         override.setType(gen.org.tkit.onecx.theme.client.model.OverrideType.CSS);
         override.setValue(".a {}");
-        override.setPosition(3);
+        override.setPos(3);
         override.setAlias("my-alias");
         Theme data = new Theme();
         data.setId("test-id-2");
@@ -359,7 +359,7 @@ class ThemeRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .extract().as(GetThemeResponseDTO.class);
 
-        Assertions.assertEquals(3, output.getResource().getOverrides().get(0).getPosition());
+        Assertions.assertEquals(3, output.getResource().getOverrides().get(0).getPos());
         Assertions.assertEquals("my-alias", output.getResource().getOverrides().get(0).getAlias());
     }
 
@@ -369,7 +369,7 @@ class ThemeRestControllerTest extends AbstractTest {
         var clientOverride = new gen.org.tkit.onecx.theme.client.model.ThemeOverride();
         clientOverride.setType(gen.org.tkit.onecx.theme.client.model.OverrideType.PRIMENG);
         clientOverride.setValue(".a {}");
-        clientOverride.setPosition(2);
+        clientOverride.setPos(2);
         clientOverride.setAlias("my-alias");
         UpdateTheme updateTheme = new UpdateTheme();
         updateTheme.setName("test-name");
@@ -393,7 +393,7 @@ class ThemeRestControllerTest extends AbstractTest {
         var dtoOverride = new ThemeOverrideDTO();
         dtoOverride.setType(OverrideTypeDTO.PRIMENG);
         dtoOverride.setValue(".a {}");
-        dtoOverride.setPosition(2);
+        dtoOverride.setPos(2);
         dtoOverride.setAlias("my-alias");
         ThemeUpdateCreateDTO updateCreateDTO = new ThemeUpdateCreateDTO();
         updateCreateDTO.setName("test-name");

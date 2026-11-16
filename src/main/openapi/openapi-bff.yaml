@@ -837,7 +837,7 @@ components:
      $ref: '#/components/schemas/OverrideType'
     alias:
      type: string
-    position:
+    pos:
      format: int32
      type: integer
     value:
