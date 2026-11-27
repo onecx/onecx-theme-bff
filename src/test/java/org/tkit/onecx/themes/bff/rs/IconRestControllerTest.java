@@ -161,6 +161,37 @@ class IconRestControllerTest extends AbstractTest {
     }
 
     @Test
+    void uploadIconSetAlreadyExists_Test() {
+        // payload and content type as sent by the svc
+        var problemDetailJson = "{\"errorCode\":\"ICONSET_ALREADY_EXISTS\",\"detail\":\"Iconset with prefix 'mdi' already exists\","
+                + "\"params\":[{\"key\":\"constraint\",\"value\":\"x\"}],\"invalidParams\":[]}";
+
+        mockServerClient
+                .when(request().withPath("/internal/iconsets/themeName")
+                        .withMethod(HttpMethod.POST))
+                .withPriority(100)
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                        .withContentType(MediaType.parse("application/json;charset=UTF-8"))
+                        .withBody(problemDetailJson));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .pathParam("refId", "themeName")
+                .body(FILE)
+                .contentType(APPLICATION_JSON)
+                .post("/iconsets/{refId}")
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProblemDetailResponseDTO.class);
+
+        Assertions.assertEquals("ICONSET_ALREADY_EXISTS", output.getErrorCode());
+    }
+
+    @Test
     void getIconSetsByRefId_Test() {
 
         var refId = "themeName";
