@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import jakarta.ws.rs.core.Response;
 
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.mapstruct.Mapper;
@@ -24,6 +25,8 @@ import gen.org.tkit.onecx.theme.client.model.ProblemDetailResponse;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface ExceptionMapper {
+
+    Logger LOG = Logger.getLogger(ExceptionMapper.class);
 
     default RestResponse<ProblemDetailResponseDTO> constraint(ConstraintViolationException ex) {
         var dto = exception("CONSTRAINT_VIOLATIONS", ex.getMessage());
@@ -39,8 +42,10 @@ public interface ExceptionMapper {
         } else {
             if (ex.getResponse().getMediaType() != null
                     && ex.getResponse().getMediaType().toString().contains(APPLICATION_JSON)) {
-                return Response.status(ex.getResponse().getStatus())
-                        .entity(map(ex.getResponse().readEntity(ProblemDetailResponse.class))).build();
+                var problemDetail = map(ex.getResponse().readEntity(ProblemDetailResponse.class));
+                LOG.warnf("Forwarding error from svc: status=%s, errorCode=%s, detail=%s", ex.getResponse().getStatus(),
+                        problemDetail.getErrorCode(), problemDetail.getDetail());
+                return Response.status(ex.getResponse().getStatus()).entity(problemDetail).build();
             } else {
                 return Response.status(ex.getResponse().getStatus()).build();
             }

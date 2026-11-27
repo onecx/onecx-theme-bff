@@ -491,6 +491,18 @@ components:
    required:
      - refId
      - prefix
+   properties:
+    refId:
+     type: string
+    name:
+     type: string
+    prefix:
+      type: string
+    version:
+      type: string
+    iconCount:
+      type: integer
+      format: int32
   RefType:
    type: string
    enum: [ logo, logo-small, favicon ]
